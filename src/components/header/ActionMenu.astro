@@ -1,0 +1,42 @@
+---
+import client from '../../lib/wp';
+
+type MenuItem = {
+  menuItem: {
+    title: string;
+    url: string;
+  };
+};
+
+const query = `
+  query {
+    siteSettings {
+      acfOptionsHeader {
+        actionMenu {
+          menuItem {
+            title
+            url
+          }
+        }
+      }
+    }
+  }
+`;
+
+const data = await client.request<{ siteSettings: { acfOptionsHeader: { actionMenu: MenuItem[] } } }>(query);
+const menu = data.siteSettings.acfOptionsHeader.actionMenu;
+---
+
+<ul>
+    {menu.map(({ menuItem }) => (
+<li class="action-link">
+  <a href={menuItem.url} class="gradient-fill">{menuItem.title}</a>
+</li>
+
+
+
+
+    ))}
+</ul>
+
+

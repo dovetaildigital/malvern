@@ -1,0 +1,100 @@
+---
+import client from '../../lib/wp';
+
+type MenuItem = {
+  menuItem: {
+    title: string;
+    url: string;
+  };
+  submenu?: {
+    link: {
+      title: string;
+      url: string;
+    };
+  }[];
+};
+
+const query = `
+  query {
+    siteSettings {
+      acfOptionsHeader {
+        mainMenu {
+          menuItem {
+            title
+            url
+          }
+          submenu {
+            link {
+              title
+              url
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+const data = await client.request<{ siteSettings: { acfOptionsHeader: { mainMenu: MenuItem[] } } }>(query);
+const menu = data.siteSettings.acfOptionsHeader.mainMenu;
+---
+
+<ul id="main-menu" class="flex gap-12 py-8 relative z-50">
+  {menu.map(({ menuItem, submenu }) => (
+    <li
+      class="relative"
+      data-has-submenu={Array.isArray(submenu) && submenu.length > 0}
+    >
+      <a
+        href={menuItem.url}
+        class="inline-flex items-center gap-1 px-2 py-1 transition-colors"
+      >
+        {menuItem.title}
+        {Array.isArray(submenu) && submenu.length > 0 && (
+          <i class="ph ph-arrow-down text-xs transition-transform duration-200 group-hover:rotate-180"></i>
+      )}
+      </a>
+
+      {Array.isArray(submenu) && submenu.length > 0 && (
+        <ul class="absolute left-0 top-full mt-2 p-4 min-w-[18rem] bg-gradient-background shadow-l border rounded-lg z-50 opacity-0 invisible scale-95 transition-all duration-200">
+          {submenu.map(({ link }: { link: { title: string; url: string } }) => (
+            <li>
+              <a
+                href={link.url}
+                class="block px-4 py-2 text-sm hover:bg-background rounded-lg hover:font-medium transition-colors "
+              >
+                {link.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </li>
+  ))}
+</ul>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const menuItems = document.querySelectorAll('#main-menu > li[data-has-submenu]');
+
+    menuItems.forEach((item) => {
+      const submenu = item.querySelector('ul');
+      if (!submenu) return;
+
+      const show = () => {
+        submenu.classList.remove('invisible', 'opacity-0', 'scale-95');
+        submenu.classList.add('visible', 'opacity-100', 'scale-100');
+      };
+
+      const hide = () => {
+        submenu.classList.remove('visible', 'opacity-100', 'scale-100');
+        submenu.classList.add('invisible', 'opacity-0', 'scale-95');
+      };
+
+      item.addEventListener('mouseenter', show);
+      item.addEventListener('mouseleave', hide);
+      item.addEventListener('focusin', show);
+      item.addEventListener('focusout', hide);
+    });
+  });
+</script>

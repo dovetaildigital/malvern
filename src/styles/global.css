@@ -1,0 +1,65 @@
+@tailwind components;
+@tailwind utilities;
+@layer components {
+  .heading-1 {
+    @apply text-[64px] leading-[64px] tracking-[-0.05em] font-extrabold font-inter-display text-foreground;
+  }
+
+  .heading-2 {
+    @apply text-[48px] leading-[52px] tracking-[-0.125rem] font-semibold font-inter-display text-foreground;
+  }
+
+  .heading-3 {
+    @apply text-[32px] leading-[40px] tracking-[-0.0625rem] font-semibold font-inter-display text-foreground;
+  }
+
+  .heading-4,
+  .card-label {
+    @apply text-[20px] leading-[28px] tracking-[0.25px] font-medium font-inter-display text-foreground;
+  }
+
+  .strapline {
+    @apply text-[18px] leading-[26px] tracking-[0.05em] font-semibold font-inter-display text-foreground;
+  }
+
+  .blurb-title {
+    @apply text-[24px] leading-[32px] font-semibold font-inter text-foreground;
+  }
+
+  .blurb-body,
+  .body {
+    @apply text-[16px] leading-[24px] font-medium font-inter text-foreground;
+  }
+
+  .card-body {
+    @apply text-[14px] leading-[22px] tracking-[0.25px] font-medium font-inter-display text-foreground;
+  }
+
+  .tag {
+    @apply text-[8px] leading-[1] font-semibold font-inter uppercase text-foreground;
+  }
+
+  /* Action Menu Buttons */
+  .action-link {
+    @apply inline-block relative rounded-full overflow-hidden bg-gradient-primary;
+  }
+  
+  .action-link::before {
+    content: '';
+    @apply absolute inset-[2px] bg-white rounded-full transition-transform duration-200 ease-in-out ;
+    z-index: 0;
+    transform: translateX(0%);
+  }
+  
+  .action-link:hover::before {
+    transform: translateX(105%);
+  }
+  
+  .gradient-fill {
+    @apply relative z-10 inline-block px-4 py-[6px] text-[14px] leading-[22px] font-semibold font-inter-display text-transparent bg-gradient-primary bg-clip-text transition-all duration-500 ease-out;
+  }
+  
+  .action-link:hover .gradient-fill {
+    @apply text-white bg-none;
+  }
+}
