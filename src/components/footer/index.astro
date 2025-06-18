@@ -1,0 +1,70 @@
+---
+import Logo from '../header/Logo.astro';
+import type { FooterLogoWrapper, MenuItemWrapper } from '../../types';
+
+interface FooterData {
+  footerEmail: string;
+  telephone: string;
+  footerAddress: string;
+  footerCopyright: string;
+  footerLogo: FooterLogoWrapper;
+  footerPages: MenuItemWrapper[];
+  footerServices: MenuItemWrapper[];
+}
+
+const {
+  footerEmail,
+  telephone,
+  footerAddress,
+  footerCopyright,
+  footerLogo,
+  footerPages,
+  footerServices
+} = Astro.props.footer as FooterData;
+---
+
+<footer class="my-12">
+  <div class="container bg-foreground text-background text-xs rounded-xl mx-auto p-10 grid grid-cols-1 md:grid-cols-5 gap-10 text-left">
+
+    <!-- Logo & contact -->
+    <div class="space-y-4 col-span-1 md:col-span-2">
+      <Logo />
+      <div class="space-y-1">
+        {telephone && <p><a href={`tel:${telephone}`} class="hover:underline">{telephone}</a></p>}
+        {footerEmail && <p><a href={`mailto:${footerEmail}`} class="hover:underline">{footerEmail}</a></p>}
+      </div>
+    </div>
+
+    <!-- Pages -->
+    <div>
+      <ul class="space-y-1">
+        {footerServices?.map(({ menuItem }) => (
+          <li>
+            <a href={menuItem.url} target={menuItem.target} class="hover:underline">
+              {menuItem.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <!-- Services -->
+    <div>
+      <ul class="space-y-1">
+        {footerPages?.map(({ menuItem }) => (
+          <li>
+            <a href={menuItem.url} target={menuItem.target} class="hover:underline">
+              {menuItem.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <!-- Copyright -->
+    <div class="md:col-span-5 text-center text-white">
+      <p>{footerAddress && <p>{footerAddress}</p>}</p>
+      <p>{footerCopyright || `© ${new Date().getFullYear()} Dovetail Digital. All rights reserved.`}</p>
+    </div>
+  </div>
+</footer>

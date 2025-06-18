@@ -1,0 +1,164 @@
+---
+import AnimatedTitle from './AnimatedTitle';
+import AnimatedSubtitle from './AnimatedSubtitle';
+import AnimatedCTAs from './AnimatedCTAs';
+
+interface CTA {
+  ctaLabel: string;
+  ctaLink: {
+    url: string;
+    title: string;
+    target?: string;
+  };
+  ctaIcon?: string[];
+}
+
+interface HeroProps {
+  heroType?: string[];
+  heroAlignment?: string[];
+  heroTitle: string;
+  heroSubtitle?: string;
+  heroBackgroundColor?: string;
+  heroBackgroundImage?: {
+    node: { sourceUrl: string; altText?: string };
+  } | null;
+  heroImage?: {
+    node: { sourceUrl: string; altText?: string };
+  } | null;
+  heroTextTheme?: string[];
+  heroAnimationStyle?: string[];
+  heroCtas?: CTA[];
+}
+
+const {
+  heroType = [],
+  heroAlignment = ['center'],
+  heroTitle,
+  heroSubtitle,
+  heroBackgroundColor,
+  heroBackgroundImage = null,
+  heroImage = null,
+  heroTextTheme = ['auto'],
+  heroAnimationStyle = ['default'],
+  heroCtas = []
+} = Astro.props as HeroProps;
+
+const unwrap = (val: string[] | undefined, fallback = ''): string =>
+  Array.isArray(val) ? val[0] ?? fallback : fallback;
+
+const type = unwrap(heroType, 'high');
+const alignment = unwrap(heroAlignment, 'center');
+const textTheme = unwrap(heroTextTheme, 'auto');
+
+const bgType = heroBackgroundImage
+  ? 'image'
+  : heroBackgroundColor
+  ? 'color'
+  : 'gradient';
+
+const layoutClass =
+  type === 'high' ? 'py-36 lg:py-48' : type === 'medium' ? 'py-24' : 'py-12';
+const bgClass = bgType === 'gradient' ? 'gradient-background' : '';
+const alignmentClass =
+  alignment === 'center'
+    ? 'text-center items-center'
+    : alignment === 'right'
+    ? 'text-right items-end'
+    : 'text-left items-start';
+const textColorClass =
+  textTheme === 'dark'
+    ? 'text-slate-900'
+    : textTheme === 'light'
+    ? 'text-white'
+    : 'text-inherit';
+
+const iconModules = import.meta.glob(
+  '/src/assets/icons/phosphor/*.svg',
+  { as: 'raw', eager: true }
+) as Record<string, string>;
+
+const loadIcon = (iconName: string): string | null => {
+  if (!iconName || iconName === 'none') return null;
+  const path = `/src/assets/icons/phosphor/${iconName}.svg`;
+  return iconModules[path] ?? null;
+};
+
+const renderedCtas = heroCtas.map((cta) => {
+  const iconName = unwrap(cta.ctaIcon, '');
+  const iconSvg = iconName ? loadIcon(iconName) : null;
+  return {
+    label: cta.ctaLabel,
+    url: cta.ctaLink.url,
+    target: cta.ctaLink.target ?? '_self',
+    iconSvg
+  };
+});
+---
+<section class={`hero relative overflow-hidden ${layoutClass} px-6 flex flex-col justify-center ${bgClass} ${textColorClass}`}>
+  {heroImage?.node?.sourceUrl && (
+    <>
+      <div
+        class="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat bg-fixed"
+        style={`background-image: url('${heroImage.node.sourceUrl}');`}
+      />
+      <div class="absolute inset-0 -z-10 bg-black/40" />
+    </>
+  )}
+
+  <div class={`max-w-2xl w-full flex flex-col gap-8 mx-auto ${alignment === 'center' ? 'items-center text-center' : alignment === 'right' ? 'items-end text-right' : 'items-start text-left'}`}>
+    <div class="relative inline-block group w-fit" id="hero-area">
+      <AnimatedTitle client:load title={heroTitle} />
+    </div>
+
+    {heroSubtitle && (
+      <AnimatedSubtitle client:load text={heroSubtitle} />
+    )}
+
+    {renderedCtas.length > 0 && (
+      <AnimatedCTAs client:load ctas={renderedCtas} alignment={alignment} />
+    )}
+  </div>
+</section>
+0
+
+
+
+  <script type="module">
+    const overlayTitle = document.getElementById('gradient-overlay-title');
+    const overlaySubtitle = document.getElementById('gradient-overlay-subtitle');
+    const heading = document.getElementById('hero-heading');
+    const strapline = document.getElementById('hero-strapline');
+
+    const maskSize = 480;
+    const radius = maskSize / 2;
+
+    document.addEventListener('mousemove', (e) => {
+      if (overlayTitle && heading) {
+        const rect = heading.getBoundingClientRect();
+        const x = e.clientX - rect.left - radius;
+        const y = e.clientY - rect.top - radius;
+        overlayTitle.style.maskPosition = `${x}px ${y}px`;
+        overlayTitle.style.webkitMaskPosition = `${x}px ${y}px`;
+      }
+
+      if (overlaySubtitle && strapline) {
+        const rect = strapline.getBoundingClientRect();
+        const x = e.clientX - rect.left - radius;
+        const y = e.clientY - rect.top - radius;
+        overlaySubtitle.style.maskPosition = `${x}px ${y}px`;
+        overlaySubtitle.style.webkitMaskPosition = `${x}px ${y}px`;
+      }
+    });
+
+    document.addEventListener('mouseleave', () => {
+      if (overlayTitle) {
+        overlayTitle.style.maskPosition = `-9999px -9999px`;
+        overlayTitle.style.webkitMaskPosition = `-9999px -9999px`;
+      }
+      if (overlaySubtitle) {
+        overlaySubtitle.style.maskPosition = `-9999px -9999px`;
+        overlaySubtitle.style.webkitMaskPosition = `-9999px -9999px`;
+      }
+    });
+  </script>
+</section>

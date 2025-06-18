@@ -1,0 +1,22 @@
+---
+import High from './high.astro';
+import Medium from './medium.astro';
+import Low from './low.astro';
+import type { HeroProps } from '../../types/hero';
+
+const props = Astro.props as HeroProps;
+const unwrap = (val: string[] | undefined, fallback: string = '') =>
+  Array.isArray(val) ? val[0] ?? fallback : fallback;
+
+const heroType = unwrap(props.heroType, 'medium');
+
+const Component = heroType === 'high'
+  ? High
+  : heroType === 'low'
+    ? Low
+    : Medium;
+
+
+---
+
+<Component {...props} />

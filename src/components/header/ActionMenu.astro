@@ -10,8 +10,8 @@ type MenuItem = {
 
 const query = `
   query {
-    siteSettings {
-      acfOptionsHeader {
+    siteOptions {
+      headerMenu {
         actionMenu {
           menuItem {
             title
@@ -23,8 +23,8 @@ const query = `
   }
 `;
 
-const data = await client.request<{ siteSettings: { acfOptionsHeader: { actionMenu: MenuItem[] } } }>(query);
-const menu = data.siteSettings.acfOptionsHeader.actionMenu;
+const data = await client.request<{ siteOptions: { headerMenu: { actionMenu: MenuItem[] } } }>(query);
+const menu = data.siteOptions.headerMenu.actionMenu;
 ---
 
 <ul>

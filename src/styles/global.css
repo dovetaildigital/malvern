@@ -35,10 +35,17 @@
     @apply text-[14px] leading-[22px] tracking-[0.25px] font-medium font-inter-display text-foreground;
   }
 
+  .button {
+    @apply text-[14px] leading-[22px] tracking-[-0.5px] font-medium font-inter-display text-foreground;
+  }
+
   .tag {
     @apply text-[8px] leading-[1] font-semibold font-inter uppercase text-foreground;
   }
 
+  .cta-primary {
+    @apply inline-block button relative rounded-full overflow-hidden bg-lightgrey shadow-subtle hover:shadow-hover transition-shadow duration-300 ease-in-out p-[10px];
+}
   /* Action Menu Buttons */
   .action-link {
     @apply inline-block relative rounded-full overflow-hidden bg-gradient-primary;
@@ -62,4 +69,16 @@
   .action-link:hover .gradient-fill {
     @apply text-white bg-none;
   }
+
+.gradient-animated {
+  background-image: linear-gradient(65deg, #DCF94D 0%, #FF4FA1 50%, #543DC6 100%);
+  background-size: 200% 200%;
+  background-position: 0% 50%;
+  transition: background-position 1.5s ease, color 0.5s ease;
+}
+
+.gradient-animated:hover {
+  background-position: 100% 50%;
+}
+
 }

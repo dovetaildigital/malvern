@@ -1,0 +1,34 @@
+---
+import type { Block } from '@/types/page-builder';
+import type { HeroProps } from '@/types/hero';
+import type { StackItem, ParsedStackItem } from '@/types/imagestack';
+
+import Hero from '@/components/hero/index.astro';
+import ImageStack from '@/components/imagestack/index.tsx';
+
+const { contentBlocks } = Astro.props as {
+  contentBlocks: Block[];
+};
+
+function parseStackItem(item: StackItem, index: number): ParsedStackItem {
+  return {
+    id: `image-${index}`,
+    src: item.image?.node?.sourceUrl ?? '',
+    alt: item.image?.node?.altText ?? '',
+    label: item.label ?? '',
+  };
+}
+---
+
+{contentBlocks.map((block) => {
+  switch (block.__typename) {
+    case 'HeroComponent':
+      return <Hero {...(block as HeroProps)} />;
+    case 'ImageStackComponent': {
+      const stackItems = (block as { imageStackItems: StackItem[] }).imageStackItems.map(parseStackItem);
+      return <ImageStack items={stackItems} client:load />;
+    }
+    default:
+      return null;
+  }
+}).filter(Boolean)}

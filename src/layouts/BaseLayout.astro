@@ -1,10 +1,60 @@
 ---
 import Header from '../components/header/Header.astro';
-import Footer from '../components/Footer.astro';
 import '../styles/global.css';
 import '../styles/base.css';
 import MobilePanel from '../components/header/MobilePanel.tsx';
 import MobileMenuWrapper from '../components/header/MobileMenuWrapper';
+
+import type { FooterData } from '../types';
+import client from '../lib/wp';
+import Footer from '../components/footer/index.astro';
+
+const footerQuery = `
+  query {
+    siteOptions {
+      footer {
+        footerEmail
+        footerAddress
+        footerCopyright
+        telephone
+        footerPages {
+          menuItem {
+            url
+            title
+            target
+          }
+        }
+        footerServices {
+          menuItem {
+            title
+            url
+            target
+          }
+        }
+        footerLogo {
+          node {
+            altText
+            title
+            uri
+            mediaDetails {
+              height
+              width
+              sizes {
+                name
+                sourceUrl
+                width
+                height
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+const { siteOptions } = await client.request<{ siteOptions: { footer: FooterData } }>(footerQuery);
+
 ---
 <html lang="en">
   <head>
@@ -22,7 +72,7 @@ import MobileMenuWrapper from '../components/header/MobileMenuWrapper';
         <slot />  
       </main>
 
-      <Footer />
+      <Footer footer={siteOptions.footer} />
     </div>
   </body>
 </html>

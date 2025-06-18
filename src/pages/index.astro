@@ -1,7 +1,29 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageBuilder from '@/components/PageBuilder.astro';
+import type { Block } from '@/types/page-builder';
+import { fetchHomeData } from '@/lib/fetchHomeData';
+
+const { title, hero, contentBlocks: additionalBlocks } = await fetchHomeData();
+
+const imageStackBlock: Block = {
+  __typename: 'ImageStackComponent',
+  // Use the data from additionalBlocks, not from undefined 'data'
+  imageStackItems:
+    additionalBlocks.length > 0 && 'imageStackItems' in additionalBlocks[0]
+      ? additionalBlocks[0].imageStackItems
+      : [],
+};
+
+const contentBlocks: Block[] = [
+  {
+    __typename: 'HeroComponent',
+    ...hero,
+  },
+  imageStackBlock,
+];
 ---
 
-<BaseLayout>
-  <h1 class="heading-1"></h1>
+<BaseLayout title={title}>
+  <PageBuilder contentBlocks={contentBlocks} />
 </BaseLayout>

@@ -8,8 +8,8 @@ import type { MenuItem, ActionItem } from '../../types';
 
 const mainMenuQuery = `
   query {
-    siteSettings {
-      acfOptionsHeader {
+    siteOptions {
+      headerMenu {
         mainMenu {
           menuItem {
             title
@@ -34,16 +34,16 @@ const mainMenuQuery = `
 `;
 
 const data = await client.request<{ 
-  siteSettings: { 
-    acfOptionsHeader: { 
+  siteOptions: { 
+    headerMenu: { 
       mainMenu: MenuItem[];
       actionMenu: ActionItem[];
     } 
   } 
 }>(mainMenuQuery);
 
-const menu = data.siteSettings.acfOptionsHeader.mainMenu;
-const actionItems = data.siteSettings.acfOptionsHeader.actionMenu;
+const menu = data.siteOptions.headerMenu.mainMenu;
+const actionItems = data.siteOptions.headerMenu.actionMenu;
 ---
 
 <header class="fixed top-0 left-0 w-full z-[100] bg-white px-4 py-4 border-b border-slate-100 isolate">

@@ -16,8 +16,8 @@ type MenuItem = {
 
 const query = `
   query {
-    siteSettings {
-      acfOptionsHeader {
+    siteOptions {
+      headerMenu {
         mainMenu {
           menuItem {
             title
@@ -35,8 +35,8 @@ const query = `
   }
 `;
 
-const data = await client.request<{ siteSettings: { acfOptionsHeader: { mainMenu: MenuItem[] } } }>(query);
-const menu = data.siteSettings.acfOptionsHeader.mainMenu;
+const data = await client.request<{ siteOptions: { headerMenu: { mainMenu: MenuItem[] } } }>(query);
+const menu = data.siteOptions.headerMenu.mainMenu;
 ---
 
 <ul id="main-menu" class="flex gap-12 py-8 relative z-50">
@@ -47,7 +47,7 @@ const menu = data.siteSettings.acfOptionsHeader.mainMenu;
     >
       <a
         href={menuItem.url}
-        class="inline-flex items-center gap-1 px-2 py-1 transition-colors"
+        class="inline-flex items-center gap-1 px-2 py-1 transition-colors hover:font-medium"
       >
         {menuItem.title}
         {Array.isArray(submenu) && submenu.length > 0 && (
