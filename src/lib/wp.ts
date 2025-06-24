@@ -1,5 +1,5 @@
 import { GraphQLClient } from 'graphql-request';
 
-const client = new GraphQLClient('http://localhost:10008/graphql'); // adjust if needed
+const client = new GraphQLClient(import.meta.env.WP_GRAPHQL_URL);
 
 export default client;
