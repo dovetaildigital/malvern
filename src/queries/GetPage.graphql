@@ -1,0 +1,148 @@
+# src/queries/GetPage.graphql
+
+fragment HeroFields on PageBuilderContentHeroLayout {
+  heroType
+  heroTitle
+  heroSubtitle
+  heroImage {
+    node {
+      sourceUrl
+      altText
+    }
+  }
+  heroPrimaryCta {
+    title
+    url
+    target
+  }
+  heroSecondaryCta {
+    title
+    url
+    target
+  }
+  heroPrimaryCtaIcon
+  heroSecondaryCtaIcon
+}
+
+fragment ImageStackFields on PageBuilderContentImageStackLayout {
+  imageStack {
+    stackImage {
+      node {
+        sourceUrl
+        altText
+      }
+    }
+    stackLabel
+  }
+}
+
+fragment HeadlineFields on PageBuilderContentHeadlineLayout {
+  headlineText
+  headlineSize
+  containerWidth
+}
+
+fragment TextFields on PageBuilderContentTextLayout {
+  containerWidth
+  columnContent {
+    columnWidth
+    columnContent
+    columnButton {
+      buttonLink {
+        title
+        url
+        target
+      }
+      buttonIcon
+      buttonStyle
+    }
+  }
+}
+
+fragment FeatureColumnsFields on PageBuilderContentFeatureColumnsLayout {
+  featureColumnsColumns {
+    columnText
+    columnImages {
+      columnImagesStack {
+        node {
+          sourceUrl
+          altText
+        }
+      }
+    }
+  }
+}
+
+fragment CalloutBlockFields on PageBuilderContentCalloutBlockLayout {
+  calloutItem {
+    calloutIcon
+    calloutHeadline
+    calloutDescription
+  }
+}
+
+fragment CardDeckFields on PageBuilderContentCardDeckLayout {
+  cardDeckItem {
+    cardDeckIcon
+    cardDeckHeadline
+    cardDeckDescription
+  }
+}
+
+fragment ContactFormFields on PageBuilderContentContactFormLayout {
+  formIntro
+  linkedForm {
+    node {
+      __typename
+      ... on CustomForm {
+        id
+        title
+      }
+    }
+  }
+}
+
+
+
+
+
+
+fragment ContentFields on PageBuilderContent_Layout {
+  __typename
+  ... on PageBuilderContentHeroLayout {
+    ...HeroFields
+  }
+  ... on PageBuilderContentImageStackLayout {
+    ...ImageStackFields
+  }
+  ... on PageBuilderContentHeadlineLayout {
+    ...HeadlineFields
+  }
+  ... on PageBuilderContentTextLayout {
+    ...TextFields
+  }
+  ... on PageBuilderContentFeatureColumnsLayout {
+    ...FeatureColumnsFields
+  }
+  ... on PageBuilderContentCalloutBlockLayout {
+    ...CalloutBlockFields
+  }
+  ... on PageBuilderContentCardDeckLayout {
+    ...CardDeckFields
+  }
+  ... on PageBuilderContentContactFormLayout {
+    ...ContactFormFields
+  }
+}
+
+query GetPage($id: ID!, $idType: PageIdType!) {
+  page(id: $id, idType: $idType) {
+    title
+    pageBuilder {
+      content {
+        __typename
+        ...ContentFields
+      }
+    }
+  }
+}

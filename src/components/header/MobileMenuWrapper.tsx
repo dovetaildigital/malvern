@@ -11,14 +11,11 @@ interface MobileMenuWrapperProps {
 export default function MobileMenuWrapper({ menu, actionItems = [] }: MobileMenuWrapperProps) {
   const [isOpen, setIsOpen] = useState(false);
   const toggle = () => {
-    console.log('Toggling menu. Current state:', isOpen);
     setIsOpen(prev => {
-      console.log('Setting isOpen to:', !prev);
       return !prev;
     });
   };
 
-  console.log('Rendering MobileMenuWrapper. isOpen:', isOpen);
 
   return (
     <>

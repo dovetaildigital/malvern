@@ -1,47 +1,45 @@
-import { motion, easeInOut } from 'framer-motion';
 import React from 'react';
+import { motion, easeInOut } from 'framer-motion';
+import PrimaryCTA from '../ui/primarycta';
+import SecondaryCTA from '../ui/secondarycta';
 
-type Cta = {
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      when: 'beforeChildren',
+      delay: 0.3
+    }
+  }
+};
+
+const item = {
+  hidden: { opacity: 0, y: 30 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: easeInOut
+    }
+  }
+};
+
+type CTA = {
   label: string;
   url: string;
   target: string;
-  iconSvg: string | null;
+  icon: string | null;
 };
 
-const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        when: "beforeChildren",
-        delay: 0.3 // Delay the entire container animation
-      }
-    }
-  };
-  
-  const item = {
-    hidden: { 
-      opacity: 0, 
-      y: 30 
-    },
-    show: { 
-      opacity: 1, 
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: easeInOut,
-        // This ensures both opacity and y animate together
-        opacity: { duration: 0.6, ease: easeInOut },
-        y: { duration: 0.6, ease: easeInOut }
-      }
-    }
-  };
-
 export default function AnimatedCTAs({
-  ctas,
+  primaryCta,
+  secondaryCta,
   alignment = 'center'
 }: {
-  ctas: Cta[];
+  primaryCta?: CTA | null;
+  secondaryCta?: CTA | null;
   alignment?: string;
 }) {
   return (
@@ -51,27 +49,27 @@ export default function AnimatedCTAs({
       initial="hidden"
       animate="show"
     >
-      {ctas.map((cta) => (
-        <motion.div
-          key={cta.label}
-          className="cta-primary"
-          variants={item}
-        >
-          <a
-            href={cta.url}
-            target={cta.target}
-            className="inline-flex items-center gap-2 relative z-10"
-          >
-            {cta.label}
-            {cta.iconSvg && (
-              <span
-                className="w-5 h-5 flex items-center justify-center"
-                dangerouslySetInnerHTML={{ __html: cta.iconSvg }}
-              />
-            )}
-          </a>
+      {primaryCta && (
+        <motion.div key={primaryCta.label} variants={item}>
+          <PrimaryCTA
+            label={primaryCta.label}
+            url={primaryCta.url}
+            target={primaryCta.target}
+            icon={primaryCta.icon ?? undefined}
+          />
         </motion.div>
-      ))}
+      )}
+
+      {secondaryCta && (
+        <motion.div key={secondaryCta.label} variants={item}>
+          <SecondaryCTA
+            label={secondaryCta.label}
+            url={secondaryCta.url}
+            target={secondaryCta.target}
+            icon={secondaryCta.icon ?? undefined}
+          />
+        </motion.div>
+      )}
     </motion.div>
   );
 }

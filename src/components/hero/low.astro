@@ -12,7 +12,6 @@ interface HeroProps {
   heroTitle: string;
   heroSubtitle?: string;
   heroType?: string[];
-  heroAlignment?: string[];
   heroGradient?: string[];
   heroBackgroundType?: string[];
   heroBackgroundImage?: {
@@ -36,27 +35,16 @@ const {
   heroTitle,
   heroSubtitle,
   heroType = ['medium'],
-  heroAlignment = ['center'],
-  heroGradient = ['gradient-background'],
-  heroBackgroundType = ['gradient'],
-  heroBackgroundImage = null,
   heroImage = null,
   heroTextTheme = ['auto'],
-  heroAnimationStyle = ['default'],
   heroCtas = []
 } = Astro.props as HeroProps;
 
 const unwrap = (val: string[] | undefined, fallback: string = '') => Array.isArray(val) ? val[0] ?? fallback : fallback;
 
 const type = unwrap(heroType, 'medium');
-const alignment = unwrap(heroAlignment, 'center');
-const gradient = unwrap(heroGradient, 'gradient-background');
-const bgType = unwrap(heroBackgroundType, 'gradient');
 const textTheme = unwrap(heroTextTheme, 'auto');
-const animation = unwrap(heroAnimationStyle, 'default');
 
-const bgClass = bgType === 'gradient' ? `${gradient}` : '';
-const alignmentClass = alignment === 'center' ? 'text-center items-center' : alignment === 'right' ? 'text-right items-end' : 'text-left items-start';
 const textColorClass = textTheme === 'dark' ? 'text-slate-900' : textTheme === 'light' ? 'text-white' : '';
 
 const layoutClass = type === 'high'
@@ -66,12 +54,12 @@ const layoutClass = type === 'high'
     : 'py-12';
 ---
 
-<section class={`hero ${layoutClass} px-6 flex flex-col ${bgClass} ${textColorClass} ${alignmentClass}`}>
+<section class={`hero ${layoutClass} px-6 flex flex-col ${textColorClass}`}>
   <div class="max-w-4xl">
     <h1 class="text-4xl font-bold leading-tight mb-4">{heroTitle}</h1>
     {heroSubtitle && <p class="text-lg mb-6">{heroSubtitle}</p>}
     {heroCtas.length > 0 && (
-      <div class={`flex flex-wrap gap-4 justify-${alignment}`}>
+      <div class={`flex flex-wrap gap-4`}>
         {heroCtas.map((cta) => (
           <a
             href={cta.ctaLink.url}

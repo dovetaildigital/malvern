@@ -1,34 +1,137 @@
 ---
-import type { Block } from '@/types/page-builder';
-import type { HeroProps } from '@/types/hero';
-import type { StackItem, ParsedStackItem } from '@/types/imagestack';
-
+import type { ParsedStackItem } from '@/types/imagestack';
 import Hero from '@/components/hero/index.astro';
 import ImageStack from '@/components/imagestack/index.tsx';
+import { TextColumns } from '@/components/textcolumns';
+import FeatureColumns from '@/components/featurecolumns';
+import CalloutBlock from '@/components/calloutblock';
+import CardDeck from '@/components/carddeck';
+import FormBlock from '@/components/forms';
+import Headline from './headline';
+import { Buffer } from 'buffer';
+
+import type {
+  ContentFieldsFragment,
+  ContentFieldsPageBuilderContentHeroLayoutFragment,
+  ContentFieldsPageBuilderContentImageStackLayoutFragment,
+  ContentFieldsPageBuilderContentTextLayoutFragment,
+  ContentFieldsPageBuilderContentFeatureColumnsLayoutFragment,
+  ContentFieldsPageBuilderContentCalloutBlockLayoutFragment,
+  ContentFieldsPageBuilderContentCardDeckLayoutFragment,
+  ContentFieldsPageBuilderContentHeadlineLayoutFragment,
+  ContentFieldsPageBuilderContentContactFormLayoutFragment,
+} from '@/queries/GetPage.generated';
+
+function decodeGraphqlId(id: string): number | null {
+  try {
+    const decoded = Buffer.from(id, 'base64').toString('utf-8');
+    const parts = decoded.split(':');
+    const numericId = parseInt(parts[1], 10);
+    return isNaN(numericId) ? null : numericId;
+  } catch {
+    return null;
+  }
+}
+
+type PageBuilderBlock = ContentFieldsFragment & { __typename: string };
 
 const { contentBlocks } = Astro.props as {
-  contentBlocks: Block[];
+  contentBlocks: (PageBuilderBlock | null)[];
 };
 
-function parseStackItem(item: StackItem, index: number): ParsedStackItem {
+function isPageBuilderBlock(block: unknown): block is PageBuilderBlock {
+  if (!block || typeof block !== 'object') return false;
+  const typedBlock = block as { __typename?: unknown };
+  return [
+    'PageBuilderContentHeroLayout',
+    'PageBuilderContentImageStackLayout',
+    'PageBuilderContentTextLayout',
+    'PageBuilderContentFeatureColumnsLayout',
+    'PageBuilderContentCalloutBlockLayout',
+    'PageBuilderContentCardDeckLayout',
+    'PageBuilderContentHeadlineLayout',
+    'PageBuilderContentContactFormLayout',
+  ].includes(typedBlock.__typename as string);
+}
+
+function parseStackItem(
+  item: NonNullable<ContentFieldsPageBuilderContentImageStackLayoutFragment['imageStack']>[number],
+  index: number
+): ParsedStackItem {
   return {
     id: `image-${index}`,
-    src: item.image?.node?.sourceUrl ?? '',
-    alt: item.image?.node?.altText ?? '',
-    label: item.label ?? '',
+    src: item?.stackImage?.node?.sourceUrl ?? '',
+    alt: item?.stackImage?.node?.altText ?? '',
+    label: item?.stackLabel ?? '',
   };
 }
+
+const blocks: PageBuilderBlock[] = contentBlocks.filter(isPageBuilderBlock);
 ---
 
-{contentBlocks.map((block) => {
-  switch (block.__typename) {
-    case 'HeroComponent':
-      return <Hero {...(block as HeroProps)} />;
-    case 'ImageStackComponent': {
-      const stackItems = (block as { imageStackItems: StackItem[] }).imageStackItems.map(parseStackItem);
-      return <ImageStack items={stackItems} client:load />;
+{blocks.map((block, index) => {
+  try {
+    switch (block.__typename) {
+      case 'PageBuilderContentHeroLayout':
+        return <Hero {...(block as ContentFieldsPageBuilderContentHeroLayoutFragment)} />;
+
+      case 'PageBuilderContentImageStackLayout': {
+        const items = block.imageStack?.filter(Boolean).map(parseStackItem) ?? [];
+        return <ImageStack items={items} client:load />;
+      }
+
+      case 'PageBuilderContentHeadlineLayout':
+        return <Headline {...(block as ContentFieldsPageBuilderContentHeadlineLayoutFragment)} />;
+
+      case 'PageBuilderContentTextLayout':
+        return <TextColumns {...(block as ContentFieldsPageBuilderContentTextLayoutFragment)} />;
+
+      case 'PageBuilderContentFeatureColumnsLayout':
+        return <FeatureColumns {...(block as ContentFieldsPageBuilderContentFeatureColumnsLayoutFragment)} />;
+
+      case 'PageBuilderContentCalloutBlockLayout':
+        return <CalloutBlock {...(block as ContentFieldsPageBuilderContentCalloutBlockLayoutFragment)} />;
+
+      case 'PageBuilderContentCardDeckLayout':
+        return <CardDeck {...(block as ContentFieldsPageBuilderContentCardDeckLayoutFragment)} client:load />;
+
+      case 'PageBuilderContentContactFormLayout': {
+        const contactFormBlock = block as ContentFieldsPageBuilderContentContactFormLayoutFragment;
+        const formNode = contactFormBlock.linkedForm?.node;
+
+        if (!formNode || formNode.__typename !== 'CustomForm' || !formNode.id) {
+          return (
+            <div class="text-red-600 text-sm">
+              No Contact Form selected. Please select a valid form in ACF.
+            </div>
+          );
+        }
+
+        const numericFormId = decodeGraphqlId(formNode.id);
+
+        if (!numericFormId) {
+          return (
+            <div class="text-red-600 text-sm">
+              Invalid form ID. Please check your form selection.
+            </div>
+          );
+        }
+
+        return (
+          <FormBlock
+            formId={numericFormId}
+            formTitle={formNode.title ?? undefined}
+            title={contactFormBlock.formIntro ? '' : undefined}
+            intro={contactFormBlock.formIntro ?? undefined}
+            client:load
+          />
+        );
+      }
+
+      default:
+        return null;
     }
-    default:
-      return null;
+  } catch (error) {
+    return null;
   }
-}).filter(Boolean)}
+})}

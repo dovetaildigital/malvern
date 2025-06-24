@@ -1,0 +1,25 @@
+schema:
+  - http://localhost:10008/graphql
+documents:
+  - 'src/**/*.graphql'
+generates:
+  src/types/graphql-types.ts:
+    plugins:
+      - typescript
+
+  src/__generated__:
+    preset: near-operation-file
+    presetConfig:
+      baseTypesPath: ../types/graphql-types.ts
+      extension: .generated.ts
+    plugins:
+      - typescript-operations
+      - typed-document-node
+
+config:
+  skipTypename: false
+  avoidOptionals: true
+  useTypeImports: true
+  namingConvention:
+    typeNames: pascal-case#pascalCase
+    enumValues: upper-case#upperCase

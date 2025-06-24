@@ -1,19 +1,16 @@
 export interface StackItem {
-  label?: string;
-  image: {
-    node: {
-      id: string;
-      sourceUrl: string;
+  stackImage?: {
+    node?: {
+      sourceUrl?: string;
       altText?: string;
     };
   };
+  stackLabel?: string;
 }
 
-  
-  export interface ParsedStackItem {
-    id: string;
-    src: string;
-    alt?: string;
-    label: string;
-  }
-  
+export interface ParsedStackItem {
+  id: string;
+  src: string;
+  alt: string;
+  label: string;
+}

@@ -1,3 +1,7 @@
+export * from './hero';
+export * from './imagestack';
+export * from './page-builder';
+
 export type MenuItem = {
     menuItem: {
       title: string;

@@ -30,11 +30,10 @@ const homeQuery = `
         heroGradient
         heroImage {
           node {
-            sourceUrl
+            sourceUrl 
             altText
           }
         }
-        heroAlignment
         heroTextTheme
         heroAnimationStyle
       }
@@ -89,21 +88,12 @@ type HeroResponse = {
         };
         icon?: string;
       }[];
-      heroBackgroundType?: string[];
-      heroBackgroundImage?: {
-        node: {
-          sourceUrl: string;
-          altText?: string;
-        };
-      } | null;
-      heroGradient?: string[];
       heroImage?: {
         node: {
           sourceUrl: string;
           altText?: string;
         };
       } | null;
-      heroAlignment?: string[];
       heroTextTheme?: string[];
       heroAnimationStyle?: string[];
     };

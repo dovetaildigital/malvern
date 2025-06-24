@@ -32,4 +32,3 @@ export default function AnimatedTitle({ title }: { title: string }) {
     </motion.h1>
   );
 }
-
