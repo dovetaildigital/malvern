@@ -1,6 +1,6 @@
 // src/lib/icons.ts
 
-const iconModules = import.meta.glob('@/assets/icons/phosphor/*.svg', {
+const iconModules = import.meta.glob('/public/assets/icons/phosphor/*.svg', {
   eager: true,
   as: 'url'
 });
@@ -13,4 +13,4 @@ for (const path in iconModules) {
   icons[slug] = iconModules[path] as string;
 }
 
-export { icons }; // ← This line is essential
+export { icons };
