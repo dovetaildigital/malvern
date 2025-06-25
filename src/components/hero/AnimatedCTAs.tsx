@@ -4,18 +4,18 @@ import PrimaryCTA from '../ui/primarycta';
 import SecondaryCTA from '../ui/secondarycta';
 
 const container = {
-  hidden: { opacity: 0 },
+  hidden: { opacity: 0, display: 'flex' },
   show: {
     opacity: 1,
     transition: {
       when: 'beforeChildren',
-      delay: 0.3
+      delay: 0
     }
   }
 };
 
 const item = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 0 },
   show: {
     opacity: 1,
     y: 0,
@@ -48,6 +48,7 @@ export default function AnimatedCTAs({
       variants={container}
       initial="hidden"
       animate="show"
+      style={{ willChange: 'opacity' }}  // Optimize for opacity animations
     >
       {primaryCta && (
         <motion.div key={primaryCta.label} variants={item}>

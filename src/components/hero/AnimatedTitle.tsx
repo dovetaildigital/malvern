@@ -6,9 +6,9 @@ export default function AnimatedTitle({ title }: { title: string }) {
     <motion.h1
       id="hero-heading"
       className="heading-1 relative z-10 overflow-visible pb-2"
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 0 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: 'easeOut' }}
+      transition={{ duration: 0.6, ease: 'easeInOut' }}
     >
       {title}
       <span

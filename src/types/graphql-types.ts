@@ -4714,6 +4714,8 @@ export type PageBuilderContentHeadlineLayout = AcfFieldGroup & AcfFieldGroupFiel
   headlineSize: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** Field of the &quot;text&quot; Field Type added to the schema as part of the &quot;PageBuilderContentHeadlineLayout&quot; Field Group */
   headlineText: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;select&quot; Field Type added to the schema as part of the &quot;PageBuilderContentHeadlineLayout&quot; Field Group */
+  paddingTop: Maybe<Array<Maybe<Scalars['String']['output']>>>;
 };
 
 /** Interface representing fields of the ACF &quot;PageBuilderContentHeadlineLayout&quot; Field Group */
@@ -4729,6 +4731,8 @@ export type PageBuilderContentHeadlineLayoutFields = {
   headlineSize: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** Field of the &quot;text&quot; Field Type added to the schema as part of the &quot;PageBuilderContentHeadlineLayout&quot; Field Group */
   headlineText: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;select&quot; Field Type added to the schema as part of the &quot;PageBuilderContentHeadlineLayout&quot; Field Group */
+  paddingTop: Maybe<Array<Maybe<Scalars['String']['output']>>>;
 };
 
 /** The &quot;PageBuilderContentHeroLayout&quot; Field Group. Added to the Schema by &quot;WPGraphQL for ACF&quot;. */
@@ -5183,7 +5187,7 @@ export enum PluginStatusEnum {
 }
 
 /** A chronological content entry typically used for blog posts, news articles, or similar date-based content. */
-export type Post = ContentNode & DatabaseIdentifier & MenuItemLinkable & Node & NodeWithAuthor & NodeWithComments & NodeWithContentEditor & NodeWithExcerpt & NodeWithFeaturedImage & NodeWithRevisions & NodeWithTemplate & NodeWithTitle & NodeWithTrackbacks & Previewable & UniformResourceIdentifiable & {
+export type Post = ContentNode & DatabaseIdentifier & MenuItemLinkable & Node & NodeWithAuthor & NodeWithComments & NodeWithContentEditor & NodeWithExcerpt & NodeWithFeaturedImage & NodeWithRevisions & NodeWithTemplate & NodeWithTitle & NodeWithTrackbacks & Previewable & UniformResourceIdentifiable & WithAcfPageBuilder & {
   __typename?: 'Post';
   /**
    * The ancestors of the content node.
@@ -5266,6 +5270,8 @@ export type Post = ContentNode & DatabaseIdentifier & MenuItemLinkable & Node & 
   modified: Maybe<Scalars['String']['output']>;
   /** The GMT modified time for a post. If a post was recently updated the modified field will change to match the corresponding time in GMT. */
   modifiedGmt: Maybe<Scalars['String']['output']>;
+  /** Fields of the PageBuilder ACF Field Group */
+  pageBuilder: Maybe<PageBuilder>;
   /**
    * The parent of the content node.
    * @deprecated This content type is not hierarchical and typically will not have a parent

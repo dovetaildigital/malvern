@@ -39,7 +39,7 @@ interface FieldProps {
               {field.label}
               {field.required && <span className="text-red-500"></span>}
             </label>
-            <textarea {...sharedProps} rows={4} className={`${sharedProps.className} min-h-[100px] flex-grow resize-none placeholder:text-fadedgrey placeholder:body`} />
+            <textarea {...sharedProps} rows={4} className={`${sharedProps.className} min-h-[100px] flex-grow resize-none placeholder:body`} />
           </div>
         );
   
@@ -71,9 +71,9 @@ interface FieldProps {
               type="checkbox"
               checked={value === 'true'}
               onChange={(e) => onChange(String(e.target.checked))}
-              className="h-4 w-4 rounded border-fadedgrey text-blue-600 focus:ring-blue-500"
+              className="h-8 w-8 rounded border-fadedgrey text-foreground focus:ring-foreground"
             />
-            <label htmlFor={field.name} className="ml-3 text-fadedgrey body">
+            <label htmlFor={field.name} className="ml-3 text-foreground body">
               {field.label}
               {field.required && <span className="text-red-500"></span>}
             </label>

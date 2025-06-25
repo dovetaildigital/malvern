@@ -17,9 +17,18 @@ export async function fetchPageData(
     idType,
   };
 
-  const { page } = await client.request<GetPageQuery>(GetPageDocument, variables);
-
-  console.log('GraphQL page data fetched:', JSON.stringify(page, null, 2)); // <-- Add this log
-
-  return page;
+  try {
+    const data = await client.request<GetPageQuery>(GetPageDocument, variables);
+    return data.page;
+  } catch (error: any) {
+    console.error('❌ GraphQL request failed');
+    if (error.response) {
+      console.error('Response error:', JSON.stringify(error.response, null, 2));
+    } else if (error.request) {
+      console.error('No response received:', error.request);
+    } else {
+      console.error('Error:', error.message);
+    }
+    throw error;
+  }
 }

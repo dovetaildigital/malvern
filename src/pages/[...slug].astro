@@ -1,0 +1,37 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageBuilder from '@/components/PageBuilder.astro';
+import { fetchPageData } from '@/lib/fetchPageData';
+import { fetchAllPageSlugs } from '@/lib/fetchAllPageSlugs';
+import { PageIdType } from '@/types/graphql-types';
+
+export async function getStaticPaths() {
+  const slugs = await fetchAllPageSlugs();
+  console.log('Static paths for pages:', slugs);
+  return slugs
+    .filter(slug => typeof slug === 'string' && slug.trim() !== '')
+    .map(slug => ({
+      params: { slug }
+    }));
+}
+
+interface SlugParams {
+  slug?: string | string[];
+}
+const { slug } = Astro.params as SlugParams;
+// This is always a string or undefined
+const fullSlug = typeof slug === 'string' ? slug : '';
+
+const page = await fetchPageData(fullSlug, PageIdType.URI);
+
+if (!page) {
+  throw new Error(`Page not found for slug: ${fullSlug}`);
+}
+
+const { title, pageBuilder } = page;
+const rawBlocks = pageBuilder?.content ?? [];
+---
+
+<BaseLayout title={title}>
+  <PageBuilder contentBlocks={rawBlocks} /> 
+</BaseLayout>

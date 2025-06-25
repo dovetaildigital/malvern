@@ -9,4 +9,4 @@ export interface CalloutItem {
 
 export interface CalloutBlockProps {
     calloutItem: CalloutItem[] | null;
-}
+  }

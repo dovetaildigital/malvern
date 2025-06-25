@@ -33,11 +33,22 @@ function decodeGraphqlId(id: string): number | null {
   }
 }
 
+function safe<T>(val: T | null | undefined, fallback: T): T {
+  return val ?? fallback;
+}
+
+function first<T>(arr: (T | null)[] | null | undefined, fallback: T): T {
+  return arr?.[0] ?? fallback;
+}
+
 type PageBuilderBlock = ContentFieldsFragment & { __typename: string };
 
 const { contentBlocks } = Astro.props as {
   contentBlocks: (PageBuilderBlock | null)[];
 };
+
+
+
 
 function isPageBuilderBlock(block: unknown): block is PageBuilderBlock {
   if (!block || typeof block !== 'object') return false;
@@ -80,20 +91,95 @@ const blocks: PageBuilderBlock[] = contentBlocks.filter(isPageBuilderBlock);
         return <ImageStack items={items} client:load />;
       }
 
-      case 'PageBuilderContentHeadlineLayout':
-        return <Headline {...(block as ContentFieldsPageBuilderContentHeadlineLayoutFragment)} />;
+      case 'PageBuilderContentHeadlineLayout': {
+        const headlineBlock = block as ContentFieldsPageBuilderContentHeadlineLayoutFragment;
+        return (
+          <Headline
+            headlineText={safe(headlineBlock.headlineText, '')}
+            headlineSize={[first(headlineBlock.headlineSize, 'large')]}
+            containerWidth={first(headlineBlock.containerWidth, 'w-full')}
+          />
+        );
+      }
 
-      case 'PageBuilderContentTextLayout':
-        return <TextColumns {...(block as ContentFieldsPageBuilderContentTextLayoutFragment)} />;
+      case 'PageBuilderContentTextLayout': {
+  const textBlock = block as ContentFieldsPageBuilderContentTextLayoutFragment;
+  return (
 
-      case 'PageBuilderContentFeatureColumnsLayout':
-        return <FeatureColumns {...(block as ContentFieldsPageBuilderContentFeatureColumnsLayoutFragment)} />;
+    <TextColumns
+      columnContent={(textBlock.columnContent ?? []).map((item) => {
+        const button = item?.columnButton ? {
+          buttonLink: {
+            title: item.columnButton.buttonLink?.title ?? '',
+            url: item.columnButton.buttonLink?.url ?? '',
+            target: item.columnButton.buttonLink?.target ?? '_self'
+          },
+          buttonIcon: first(item.columnButton.buttonIcon, ''),
+          buttonStyle: first(item.columnButton.buttonStyle, 'default') as 'primary' | 'secondary' | 'default'
+        } : undefined;
 
-      case 'PageBuilderContentCalloutBlockLayout':
-        return <CalloutBlock {...(block as ContentFieldsPageBuilderContentCalloutBlockLayoutFragment)} />;
+        return {
+          columnWidth: first(item?.columnWidth, 'col-span-6'),
+          columnContent: safe(item?.columnContent, ''),
+          ...(button ? { columnButton: button } : {})
+        };
+      })}
+      containerWidth={first(textBlock.containerWidth, 'container-lg')}
+    />
+  );
+}
 
-      case 'PageBuilderContentCardDeckLayout':
-        return <CardDeck {...(block as ContentFieldsPageBuilderContentCardDeckLayoutFragment)} client:load />;
+case 'PageBuilderContentFeatureColumnsLayout': {
+  const featureBlock = block as ContentFieldsPageBuilderContentFeatureColumnsLayoutFragment;
+  return (
+    <FeatureColumns
+      featureColumnsColumns={(featureBlock.featureColumnsColumns ?? []).map(column => ({
+        columnText: column?.columnText ?? '',
+        columnImages: (column?.columnImages ?? [])
+          .filter((img): img is NonNullable<typeof img> => Boolean(img?.columnImagesStack))
+          .map(img => ({
+            columnImagesStack: {
+              node: {
+                sourceUrl: img.columnImagesStack?.node?.sourceUrl ?? '',
+                altText: img.columnImagesStack?.node?.altText ?? undefined
+              }
+            }
+          }))
+      }))}
+    />
+  );
+}
+
+case 'PageBuilderContentCalloutBlockLayout': {
+  const calloutBlock = block as ContentFieldsPageBuilderContentCalloutBlockLayoutFragment;
+  return (
+    <CalloutBlock
+      calloutItem={(calloutBlock.calloutItem ?? [])
+        .filter((item): item is NonNullable<typeof item> => Boolean(item))
+        .map(item => ({
+          calloutIcon: first(item.calloutIcon, ''),
+          calloutHeadline: item.calloutHeadline ?? '',
+          calloutDescription: item.calloutDescription ?? ''
+        }))}
+    />
+  );
+}
+
+case 'PageBuilderContentCardDeckLayout': {
+  const cardBlock = block as ContentFieldsPageBuilderContentCardDeckLayoutFragment;
+  return (
+    <CardDeck
+      cardDeckItem={(cardBlock.cardDeckItem ?? [])
+        .filter((card): card is NonNullable<typeof card> => Boolean(card))
+        .map(card => ({
+          cardDeckIcon: first(card.cardDeckIcon, ''),
+          cardDeckHeadline: card.cardDeckHeadline ?? '',
+          cardDeckDescription: card.cardDeckDescription ?? ''
+        }))}
+      client:load
+    />
+  );
+}
 
       case 'PageBuilderContentContactFormLayout': {
         const contactFormBlock = block as ContentFieldsPageBuilderContentContactFormLayoutFragment;
@@ -118,6 +204,8 @@ const blocks: PageBuilderBlock[] = contentBlocks.filter(isPageBuilderBlock);
         }
 
         return (
+        <section class="w-full px-4 py-18 lg:py-48">
+
           <FormBlock
             formId={numericFormId}
             formTitle={formNode.title ?? undefined}
@@ -125,6 +213,7 @@ const blocks: PageBuilderBlock[] = contentBlocks.filter(isPageBuilderBlock);
             intro={contactFormBlock.formIntro ?? undefined}
             client:load
           />
+          </section>
         );
       }
 

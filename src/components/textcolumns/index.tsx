@@ -22,7 +22,7 @@ interface TextColumnsProps {
 
 export const TextColumns: React.FC<TextColumnsProps> = ({
   columnContent,
-  containerWidth = 'container-lg'
+  containerWidth = 'container-lg',
 }) => {
   return (
     <section className="w-full px-4 py-18 lg:py-24">

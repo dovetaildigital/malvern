@@ -1,5 +1,4 @@
 import React from 'react';
-import ImageStack from '@/components/imagestack';
 import type { ParsedStackItem as Item } from '@/types/imagestack';
 
 interface ColumnImage {
@@ -23,7 +22,7 @@ interface FeatureColumnsProps {
 
 const FeatureColumns: React.FC<FeatureColumnsProps> = ({ 
   featureColumnsColumns = [],
-  containerWidth = 'container-lg'
+  containerWidth = 'container-lg',
 }) => {
   if (!featureColumnsColumns || featureColumnsColumns.length === 0) {
     return null;
@@ -36,9 +35,9 @@ const FeatureColumns: React.FC<FeatureColumnsProps> = ({
   };
 
   return (
-    <section className="w-full px-4 py-18 lg:py-24">
       <div className={containerWidth}>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-x-12 md:gap-y-36">
+
               {featureColumnsColumns.map((col, index) => {
             if (!col) return null;
 
@@ -61,37 +60,35 @@ const FeatureColumns: React.FC<FeatureColumnsProps> = ({
                   flex flex-col gap-8
                   ${
                     index % 3 !== 0 // If not first in row
-                      ? 'md:border-l md:border-gray-100 md:pl-8' 
+                      ? '' 
                       : ''
                   }
                 `}
               >
-                {col.columnText && (
-                  <div 
-                    className="prose max-w-none"
-                    dangerouslySetInnerHTML={{ __html: col.columnText }} 
-                  />
-                )}
-                
-{items.length > 0 && (
+                {items.length > 0 && (
   <div className="relative h-[300px] w-full">
     <img
       src={items[0].src}
       alt={items[0].alt || ''}
       className="w-full h-full object-cover rounded-lg shadow-subtle mt-4"
       style={{ 
-        transform: `rotate(${getRandomRotation(index)}deg)`,
+        transform: ``,
         transition: 'transform 0.3s ease-in-out'
       }}
     />
   </div>
 )}
+                {col.columnText && (
+                  <div 
+                    className="prose max-w-none"
+                    dangerouslySetInnerHTML={{ __html: col.columnText }} 
+                  />
+                )}
               </div>
             );
           })}
         </div>
       </div>
-    </section>
   );
 };
 
