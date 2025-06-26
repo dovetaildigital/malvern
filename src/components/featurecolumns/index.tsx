@@ -58,17 +58,19 @@ const FeatureColumns: React.FC<FeatureColumnsProps> = ({
                     dangerouslySetInnerHTML={{ __html: col.columnText }} 
                   />
                 )}
-                {featureLink && featureLink.url && featureLink.title && (
-                  <div className="flex justify-start">
-                    <a 
-                      href={featureLink.url} 
-                      target={featureLink.target || '_self'} 
-                      className="btn btn-primary"
-                    >
-                      {featureLink.title}
-                    <ArrowCircleRightIcon size={32} className="h-5 w-5 flex-shrink-0" />
-                    </a>
-                  </div>
+           {featureLink?.url && featureLink?.title && (
+  <div className="flex justify-start">
+    <a
+      href={featureLink.url}
+      target={featureLink.target || '_self'}
+      className="btn btn-primary"
+      rel={featureLink.target === '_blank' ? 'noopener noreferrer' : undefined}
+    >
+      {featureLink.title}
+      <ArrowCircleRightIcon size={32} className="h-5 w-5 flex-shrink-0 ml-2" />
+    </a>
+  </div>
+
                 )}
               </div>
             );
