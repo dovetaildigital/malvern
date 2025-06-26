@@ -9,13 +9,28 @@ export interface ColumnImage {
     } | null;
   }
   
-  export interface FeatureColumn {
-    columnText: string | null;
-    columnImages: Array<ColumnImage | null> | null;
-  }
-  
-  export interface FeatureColumnsProps {
-    featureColumnsColumns: Array<FeatureColumn | null> | null;
-    containerWidth?: string;
-  }
-  
+export interface FeatureLink {
+  title: string | null;
+  url: string | null;
+  target: string | null;
+}
+
+export interface FeatureColumn {
+  columnText: string;
+  columnImages: {
+    sourceUrl: string;
+    altText?: string;
+  }[];
+  featureLink?: {
+    title: string;
+    url: string;
+    target?: string;
+  };
+}
+
+
+export interface FeatureColumnsProps {
+  featureColumnsColumns: Array<FeatureColumn | null> | null;
+  containerWidth?: string;
+  featureLink: FeatureLink | null;
+}

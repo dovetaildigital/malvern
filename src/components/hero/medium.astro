@@ -1,80 +1,158 @@
 ---
-interface CTA {
-  ctaLabel: string;
-  ctaLink: {
-    url: string;
-    title: string;
-    target?: string;
-  };
-}
+import AnimatedTitle from './AnimatedTitle';
+import AnimatedSubtitle from './AnimatedSubtitle';
+import AnimatedCTAs from './AnimatedCTAs';
+
 
 interface HeroProps {
+  heroType?: string[];
   heroTitle: string;
   heroSubtitle?: string;
-  heroType?: string[];
+  heroBackgroundColor?: string;
+  heroBackgroundImage?: {
+    node: { sourceUrl: string; altText?: string };
+  } | null;
   heroImage?: {
-    node: {
-      sourceUrl: string;
-      altText?: string;
-    }
+    node: { sourceUrl: string; altText?: string };
   } | null;
   heroTextTheme?: string[];
   heroAnimationStyle?: string[];
-  heroCtas?: CTA[];
+  heroPrimaryCta?: {
+    url: string;
+    title: string;
+    target?: string;
+    icon?: string;
+  };
+  heroPrimaryCtaIcon?: string;
+  heroSecondaryCta?: {
+    url: string;
+    title: string;
+    target?: string;
+    icon?:string;
+  };
+  heroSecondaryCtaIcon?: string;
 }
 
 const {
+  heroType = [],
   heroTitle,
   heroSubtitle,
-  heroType = ['medium'],
+  heroBackgroundColor,
+  heroBackgroundImage = null,
   heroImage = null,
   heroTextTheme = ['auto'],
   heroAnimationStyle = ['default'],
-  heroCtas = []
+  heroPrimaryCta,
+  heroPrimaryCtaIcon,
+  heroSecondaryCta,
+  heroSecondaryCtaIcon
 } = Astro.props as HeroProps;
 
-const unwrap = (val: string[] | undefined, fallback: string = '') => Array.isArray(val) ? val[0] ?? fallback : fallback;
+
+
+
+const unwrap = (val: string[] | undefined, fallback = ''): string =>
+  Array.isArray(val) ? val[0] ?? fallback : fallback;
 
 const type = unwrap(heroType, 'medium');
 const textTheme = unwrap(heroTextTheme, 'auto');
-const animation = unwrap(heroAnimationStyle, 'default');
 
-const textColorClass = textTheme === 'dark' ? 'text-slate-900' : textTheme === 'light' ? 'text-white' : '';
+const bgType = heroBackgroundImage
+  ? 'image'
+  : heroBackgroundColor
+  ? 'color'
+  : 'gradient';
 
-const layoutClass = type === 'high'
-  ? 'py-32 lg:py-48'
-  : type === 'medium'
-    ? 'py-24'
-    : 'py-12';
+const layoutClass =
+  type === 'high' ? 'py-36 lg:py-48' : type === 'medium' ? 'py-24' : 'py-12';
+const bgClass = bgType === 'gradient' ? 'gradient-background' : '';
+const textColorClass =
+  textTheme === 'dark'
+    ? 'text-slate-900'
+    : textTheme === 'light'
+    ? 'text-white'
+    : 'text-inherit';
 ---
-
-<section class={`hero ${layoutClass} px-6 flex flex-col ${textColorClass}`}>
-  <div class="max-w-4xl">
-    <h1 class="text-4xl font-bold leading-tight mb-4">{heroTitle}</h1>
-    {heroSubtitle && <p class="text-lg mb-6">{heroSubtitle}</p>}
-    {heroCtas.length > 0 && (
-      <div class={`flex flex-wrap gap-4 justify-center sm:justify-start`}>
-        {heroCtas.map((cta) => (
-          <a
-            href={cta.ctaLink.url}
-            target={cta.ctaLink.target || '_self'}
-            class="bg-black text-white py-2 px-4 rounded hover:bg-opacity-80 transition"
-          >
-            {cta.ctaLabel}
-          </a>
-        ))}
-      </div>
-    )}
-  </div>
-
+<section class={`hero relative overflow-hidden ${layoutClass} px-6 flex flex-col justify-center ${bgClass} ${textColorClass}`}>
   {heroImage?.node?.sourceUrl && (
-    <div class="mt-8">
-      <img
-        src={heroImage.node.sourceUrl}
-        alt={heroImage.node.altText || ''}
-        class="max-w-full h-auto"
-        loading="lazy"
+    <>
+      <div
+        class="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat bg-fixed"
+        style={`background-image: url('${heroImage.node.sourceUrl}');`}
       />
-    </div>
+      <div class="absolute inset-0 -z-10 bg-black/40" />
+    </>
   )}
+
+  <div class={`max-w-2xl w-full mx-auto flex flex-col gap-8`}>
+    <div class="relative inline-block group w-full text-center" id="hero-area">
+      <AnimatedTitle client:load title={heroTitle} />
+    </div>
+<div class="text-center">
+    {heroSubtitle && (
+      <AnimatedSubtitle client:load text={heroSubtitle} />
+    )}
+</div>
+<div class="text-center">
+<AnimatedCTAs 
+client:load 
+primaryCta={
+  heroPrimaryCta && {
+    label: heroPrimaryCta.title,
+    url: heroPrimaryCta.url,
+    target: heroPrimaryCta.target || '_self',
+    icon: heroPrimaryCtaIcon || null
+  }
+}
+secondaryCta={
+  heroSecondaryCta && {
+    label: heroSecondaryCta.title,
+    url: heroSecondaryCta.url,
+    target: heroSecondaryCta.target || '_self',
+    icon: heroSecondaryCtaIcon || null
+  }
+}
+alignment="center" 
+/>
+
+  </div>
 </section>
+
+<script type="module">
+  const overlayTitle = document.getElementById('gradient-overlay-title');
+  const overlaySubtitle = document.getElementById('gradient-overlay-subtitle');
+  const heading = document.getElementById('hero-heading');
+  const strapline = document.getElementById('hero-strapline');
+
+  const maskSize = 480;
+  const radius = maskSize / 2;
+
+  document.addEventListener('mousemove', (e) => {
+    if (overlayTitle && heading) {
+      const rect = heading.getBoundingClientRect();
+      const x = e.clientX - rect.left - radius;
+      const y = e.clientY - rect.top - radius;
+      overlayTitle.style.maskPosition = `${x}px ${y}px`;
+      overlayTitle.style.webkitMaskPosition = `${x}px ${y}px`;
+    }
+
+    if (overlaySubtitle && strapline) {
+      const rect = strapline.getBoundingClientRect();
+      const x = e.clientX - rect.left - radius;
+      const y = e.clientY - rect.top - radius;
+      overlaySubtitle.style.maskPosition = `${x}px ${y}px`;
+      overlaySubtitle.style.webkitMaskPosition = `${x}px ${y}px`;
+    }
+  });
+
+  document.addEventListener('mouseleave', () => {
+    if (overlayTitle) {
+      overlayTitle.style.maskPosition = `-9999px -9999px`;
+      overlayTitle.style.webkitMaskPosition = `-9999px -9999px`;
+    }
+    if (overlaySubtitle) {
+      overlaySubtitle.style.maskPosition = `-9999px -9999px`;
+      overlaySubtitle.style.webkitMaskPosition = `-9999px -9999px`;
+    }
+  });
+</script>

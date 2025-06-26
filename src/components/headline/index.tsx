@@ -22,7 +22,7 @@ const Headline: React.FC<HeadlineProps> = ({
   return React.createElement(
     'div',
     {
-      className: `${containerWidth} text-center mt-24 mb-12`
+      className: `${containerWidth} text-center mt-24`
     },
     React.createElement(
       tagName,

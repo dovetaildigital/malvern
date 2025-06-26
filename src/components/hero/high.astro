@@ -64,7 +64,7 @@ const bgType = heroBackgroundImage
   : 'gradient';
 
 const layoutClass =
-  type === 'high' ? 'py-36' : type === 'medium' ? 'py-24' : 'py-12';
+  type === 'high' ? 'py-36 lg:py-48' : type === 'medium' ? 'py-24' : 'py-12';
 const bgClass = bgType === 'gradient' ? 'gradient-background' : '';
 const textColorClass =
   textTheme === 'dark'
@@ -84,8 +84,8 @@ const textColorClass =
     </>
   )}
 
-  <div class={`max-w-2xl w-full flex flex-col gap-8 mx-auto`}>
-    <div class="relative inline-block group w-fit text-center" id="hero-area">
+  <div class={`max-w-2xl w-full mx-auto flex flex-col gap-8`}>
+    <div class="relative inline-block group w-full text-center" id="hero-area">
       <AnimatedTitle client:load title={heroTitle} />
     </div>
 <div class="text-center">
@@ -114,7 +114,7 @@ secondaryCta={
 }
 alignment="center" 
 />
-</div>
+
   </div>
 </section>
 

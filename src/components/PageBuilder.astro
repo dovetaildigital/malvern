@@ -47,9 +47,6 @@ const { contentBlocks } = Astro.props as {
   contentBlocks: (PageBuilderBlock | null)[];
 };
 
-
-
-
 function isPageBuilderBlock(block: unknown): block is PageBuilderBlock {
   if (!block || typeof block !== 'object') return false;
   const typedBlock = block as { __typename?: unknown };
@@ -103,83 +100,90 @@ const blocks: PageBuilderBlock[] = contentBlocks.filter(isPageBuilderBlock);
       }
 
       case 'PageBuilderContentTextLayout': {
-  const textBlock = block as ContentFieldsPageBuilderContentTextLayoutFragment;
-  return (
+        const textBlock = block as ContentFieldsPageBuilderContentTextLayoutFragment;
+        return (
+          <TextColumns
+            columnContent={(textBlock.columnContent ?? []).map((item) => {
+              const button = item?.columnButton ? {
+                buttonLink: {
+                  title: item.columnButton.buttonLink?.title ?? '',
+                  url: item.columnButton.buttonLink?.url ?? '',
+                  target: item.columnButton.buttonLink?.target ?? '_self'
+                },
+                buttonIcon: first(item.columnButton.buttonIcon, ''),
+                buttonStyle: first(item.columnButton.buttonStyle, 'default') as 'primary' | 'secondary' | 'default'
+              } : undefined;
 
-    <TextColumns
-      columnContent={(textBlock.columnContent ?? []).map((item) => {
-        const button = item?.columnButton ? {
-          buttonLink: {
-            title: item.columnButton.buttonLink?.title ?? '',
-            url: item.columnButton.buttonLink?.url ?? '',
-            target: item.columnButton.buttonLink?.target ?? '_self'
-          },
-          buttonIcon: first(item.columnButton.buttonIcon, ''),
-          buttonStyle: first(item.columnButton.buttonStyle, 'default') as 'primary' | 'secondary' | 'default'
-        } : undefined;
+              return {
+                columnWidth: first(item?.columnWidth, 'col-span-6'),
+                columnContent: safe(item?.columnContent, ''),
+                ...(button ? { columnButton: button } : {})
+              };
+            })}
+            containerWidth={first(textBlock.containerWidth, 'container-lg')}
+          />
+        );
+      }
 
-        return {
-          columnWidth: first(item?.columnWidth, 'col-span-6'),
-          columnContent: safe(item?.columnContent, ''),
-          ...(button ? { columnButton: button } : {})
-        };
-      })}
-      containerWidth={first(textBlock.containerWidth, 'container-lg')}
-    />
-  );
-}
+      case 'PageBuilderContentFeatureColumnsLayout': {
+        const featureBlock = block as ContentFieldsPageBuilderContentFeatureColumnsLayoutFragment;
+        return (
+          <FeatureColumns
+            featureColumnsColumns={(featureBlock.featureColumnsColumns ?? []).map(column => {
+              if (!column) return null;
+              
+              return {
+                columnText: column.columnText ?? '',
+                columnImages: (column.columnImages ?? [])
+                  .filter((img): img is NonNullable<typeof img> => Boolean(img?.columnImagesStack?.node?.sourceUrl))
+                  .map(img => ({
+                    sourceUrl: img.columnImagesStack!.node!.sourceUrl!,
+                    ...(img.columnImagesStack!.node!.altText ? { altText: img.columnImagesStack?.node.altText } : {})
+                  })),
+                ...(column.featureLink?.title && column.featureLink.url ? {
+                  featureLink: {
+                    title: column.featureLink.title,
+                    url: column.featureLink.url,
+                    ...(column.featureLink.target ? { target: column.featureLink.target } : {})
+                  }
+                } : {})
+              };
+            })}
+            containerWidth="container-lg"
+          />
+        );
+      }
 
-case 'PageBuilderContentFeatureColumnsLayout': {
-  const featureBlock = block as ContentFieldsPageBuilderContentFeatureColumnsLayoutFragment;
-  return (
-    <FeatureColumns
-      featureColumnsColumns={(featureBlock.featureColumnsColumns ?? []).map(column => ({
-        columnText: column?.columnText ?? '',
-        columnImages: (column?.columnImages ?? [])
-          .filter((img): img is NonNullable<typeof img> => Boolean(img?.columnImagesStack))
-          .map(img => ({
-            columnImagesStack: {
-              node: {
-                sourceUrl: img.columnImagesStack?.node?.sourceUrl ?? '',
-                altText: img.columnImagesStack?.node?.altText ?? undefined
-              }
-            }
-          }))
-      }))}
-    />
-  );
-}
+      case 'PageBuilderContentCalloutBlockLayout': {
+        const calloutBlock = block as ContentFieldsPageBuilderContentCalloutBlockLayoutFragment;
+        return (
+          <CalloutBlock
+            calloutItem={(calloutBlock.calloutItem ?? [])
+              .filter((item): item is NonNullable<typeof item> => Boolean(item))
+              .map(item => ({
+                calloutIcon: first(item.calloutIcon, ''),
+                calloutHeadline: item.calloutHeadline ?? '',
+                calloutDescription: item.calloutDescription ?? ''
+              }))}
+          />
+        );
+      }
 
-case 'PageBuilderContentCalloutBlockLayout': {
-  const calloutBlock = block as ContentFieldsPageBuilderContentCalloutBlockLayoutFragment;
-  return (
-    <CalloutBlock
-      calloutItem={(calloutBlock.calloutItem ?? [])
-        .filter((item): item is NonNullable<typeof item> => Boolean(item))
-        .map(item => ({
-          calloutIcon: first(item.calloutIcon, ''),
-          calloutHeadline: item.calloutHeadline ?? '',
-          calloutDescription: item.calloutDescription ?? ''
-        }))}
-    />
-  );
-}
-
-case 'PageBuilderContentCardDeckLayout': {
-  const cardBlock = block as ContentFieldsPageBuilderContentCardDeckLayoutFragment;
-  return (
-    <CardDeck
-      cardDeckItem={(cardBlock.cardDeckItem ?? [])
-        .filter((card): card is NonNullable<typeof card> => Boolean(card))
-        .map(card => ({
-          cardDeckIcon: first(card.cardDeckIcon, ''),
-          cardDeckHeadline: card.cardDeckHeadline ?? '',
-          cardDeckDescription: card.cardDeckDescription ?? ''
-        }))}
-      client:load
-    />
-  );
-}
+      case 'PageBuilderContentCardDeckLayout': {
+        const cardBlock = block as ContentFieldsPageBuilderContentCardDeckLayoutFragment;
+        return (
+          <CardDeck
+            cardDeckItem={(cardBlock.cardDeckItem ?? [])
+              .filter((card): card is NonNullable<typeof card> => Boolean(card))
+              .map(card => ({
+                cardDeckIcon: first(card.cardDeckIcon, ''),
+                cardDeckHeadline: card.cardDeckHeadline ?? '',
+                cardDeckDescription: card.cardDeckDescription ?? ''
+              }))}
+            client:load
+          />
+        );
+      }
 
       case 'PageBuilderContentContactFormLayout': {
         const contactFormBlock = block as ContentFieldsPageBuilderContentContactFormLayoutFragment;
@@ -192,29 +196,29 @@ case 'PageBuilderContentCardDeckLayout': {
             </div>
           );
         }
-
         const numericFormId = decodeGraphqlId(formNode.id);
 
-        if (!numericFormId) {
-          return (
-            <div class="text-red-600 text-sm">
-              Invalid form ID. Please check your form selection.
-            </div>
-          );
-        }
-
         return (
-        <section class="w-full px-4 py-18 lg:py-48">
-
-          <FormBlock
-            formId={numericFormId}
-            formTitle={formNode.title ?? undefined}
-            title={contactFormBlock.formIntro ? '' : undefined}
-            intro={contactFormBlock.formIntro ?? undefined}
-            client:load
-          />
-          </section>
-        );
+  <FormBlock
+    form={{
+      id: String(numericFormId),
+      title: formNode.title ?? '',
+      fields: (formNode.formFields?.formFields ?? [])
+        .filter((field): field is NonNullable<typeof field> => Boolean(field))
+        .map(field => ({
+          formFieldName: field.formFieldName ?? '',
+          formFieldLabel: field.formFieldLabel ?? '',
+          formFieldType: Array.isArray(field.formFieldType) ? field.formFieldType[0] ?? 'text' : field.formFieldType ?? 'text',
+          formFieldsRequired: field.formFieldsRequired ?? false,
+          formFieldsPlaceholder: field.formFieldsPlaceholder ?? '',
+          formFieldsOptions: field.formFieldsOptions ?? '',
+          formFieldsDefault: field.formFieldsDefault ?? '',
+        }))
+    }}
+    intro={contactFormBlock.formIntro ?? undefined}
+    client:load
+  />
+);
       }
 
       default:

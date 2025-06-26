@@ -9,7 +9,7 @@ const CalloutBlock: React.FC<CalloutBlockProps> = ({ calloutItem }) => {
   }
 
   return (
-    <section className="w-full py-12">
+    <section className="w-full py-24">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {calloutItem.map((item, index) => (
@@ -31,7 +31,7 @@ const CalloutBlock: React.FC<CalloutBlockProps> = ({ calloutItem }) => {
                 </h3>
               )}
               {item?.calloutDescription && (
-                <p className="text-gray-600">
+                <p className="">
                   {item.calloutDescription}
                 </p>
               )}

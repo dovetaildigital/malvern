@@ -1,96 +1,53 @@
-// src/components/carddeck/index.tsx
 import React, { useRef, useState, useEffect } from 'react';
-import {
-  motion,
-  useMotionValue,
-  animate,
-  type PanInfo,
-} from 'framer-motion';
+import { motion, useMotionValue, animate, type PanInfo } from 'framer-motion';
 import type { CardDeckProps } from '@/types/carddeck';
 import Icon from '@/components/ui/icon';
 
-/* layout */
-const CARD_W   = 300;
-const CARD_H   = 250;
-const OVERLAP  = 100;
+const CARD_WIDTH = 300;
+const CARD_HEIGHT = 250;
+const SIDE_PADDING = 32; // px-4 on each side
+const OVERLAP_X = 60; // horizontal overlap
+const OVERLAP_Y = 40; // vertical overlap
 
-/* deterministic pseudo-random helpers */
-const hash = (s: string) =>
-  Array.from(s).reduce((acc, ch) => acc * 31 + ch.charCodeAt(0), 0) >>> 0;
-const rnd  = (seed: number) => {
-  const x = Math.sin(seed) * 10_000;
-  return x - Math.floor(x);
-};
-
-/* ─────────────────────────────── Card ─────────────────────────────── */
 type CardItem = {
-  cardDeckIcon:        string | null;
-  cardDeckHeadline:    string | null;
+  cardDeckIcon: string | null;
+  cardDeckHeadline: string | null;
   cardDeckDescription: string | null;
 };
 
-interface DraggableCardProps {
-  item:         CardItem;
-  index:        number;
-  draggingId:   React.MutableRefObject<string | null>;
-  topCardId:    string | null;
-  setTopCardId: React.Dispatch<React.SetStateAction<string | null>>;
-}
-
-const DraggableCard: React.FC<DraggableCardProps> = ({
+const DraggableCard = ({
   item,
   index,
   draggingId,
   topCardId,
   setTopCardId,
+}: {
+  item: CardItem;
+  index: number;
+  draggingId: React.MutableRefObject<string | null>;
+  topCardId: string | null;
+  setTopCardId: React.Dispatch<React.SetStateAction<string | null>>;
 }) => {
-  /* identity & seeded offsets */
-  const id            = item.cardDeckHeadline ?? `card-${index}`;
-  const seed          = hash(id);
-  const startX        = rnd(seed)     * 200 - 100;
-  const startY        = rnd(seed + 1) * -200 - 50;
-  const startRotate   = rnd(seed + 2) * 30  - 15;
-
-  /* motion values we’ll spring back to 0,0 */
+  const id = item.cardDeckHeadline ?? `card-${index}`;
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  /* fly-in once on mount */
   useEffect(() => {
-    x.set(startX);
-    y.set(startY);
-    animate(x, 0, { type: 'spring', stiffness: 50, duration: 0.6, delay: index * 0.1 });
-    animate(y, 0, { type: 'spring', stiffness: 50, duration: 0.6, delay: index * 0.1 });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  /* handlers */
-  const handleDragStart = () => {
-    draggingId.current = id;
-    setTopCardId(id);
-  };
-
-  const handleDragEnd = (
-    _evt: MouseEvent | TouchEvent | PointerEvent,
-    info: PanInfo
-  ) => {
-    draggingId.current = null;
-    /* spring back to origin */
-    animate(x, 0, { type: 'spring', stiffness: 300, damping: 28 });
-    animate(y, 0, { type: 'spring', stiffness: 300, damping: 28 });
-  };
+    animate(x, 0, { type: 'spring', stiffness: 50 });
+    animate(y, 0, { type: 'spring', stiffness: 50 });
+  }, []);
 
   return (
     <motion.div
       style={{
-        x, y,
-        width: CARD_W,
-        height: CARD_H,
-        position: 'relative',
-        marginLeft: index === 0 ? 0 : -OVERLAP,
+        x,
+        y,
         zIndex:
-          topCardId === id        ? 50 :
-          draggingId.current === id ? 49 :
-          index + 1,
+          topCardId === id
+            ? 50
+            : draggingId.current === id
+            ? 49
+            : index - 1,
         borderRadius: 16,
         padding: '1rem',
         boxShadow:
@@ -104,70 +61,102 @@ const DraggableCard: React.FC<DraggableCardProps> = ({
         flexDirection: 'column',
         transition: 'box-shadow 0.2s ease',
       }}
-      initial={{ rotate: startRotate }}          /* opacity 1 so SS-render visible */
       drag
-      className="bg-gradient-primary"
-      /* allow ±150 px free roam */
-      dragConstraints={{ top: -150, bottom: 150, left: -150, right: 150 }}
+      className="bg-gradient-primary w-[300px] h-[250px] shrink-0"
+      dragConstraints={{ top: -50, bottom: 50, left: -150, right: 150 }}
       dragElastic={0.25}
       dragMomentum={false}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
+      onDragStart={() => {
+        draggingId.current = id;
+        setTopCardId(id);
+      }}
+      onDragEnd={(_evt: MouseEvent | TouchEvent | PointerEvent, _info: PanInfo) => {
+        draggingId.current = null;
+        animate(x, 0, { type: 'spring', stiffness: 300, damping: 28 });
+        animate(y, 0, { type: 'spring', stiffness: 300, damping: 28 });
+      }}
       whileHover={{ scale: 1.02, boxShadow: '0 12px 24px rgba(0,0,0,0.2)' }}
       whileTap={{ cursor: 'grabbing', scale: 1.04 }}
     >
       <div className="card flex flex-col">
-        <div className="flex items-left gap-4 p-4 bg-white">
-          {item.cardDeckIcon && (
-            <Icon icon={item.cardDeckIcon} className="w-8 h-8 shrink-0" />
-          )}
-          {item.cardDeckHeadline && (
-            <h3 className="card-label">{item.cardDeckHeadline}</h3>
-          )}
+        <div className="flex items-start gap-4 p-4 bg-white">
+          {item.cardDeckIcon && <Icon icon={item.cardDeckIcon} className="w-8 h-8 shrink-0" />}
+          {item.cardDeckHeadline && <h3 className="card-label">{item.cardDeckHeadline}</h3>}
         </div>
-        {item.cardDeckDescription && (
-          <p className="card-body">{item.cardDeckDescription}</p>
-        )}
+        {item.cardDeckDescription && <p className="card-body">{item.cardDeckDescription}</p>}
       </div>
-
     </motion.div>
   );
 };
 
-/* ───────────────────────────── Deck wrapper ────────────────────────── */
+const chunkCards = (cards: CardItem[], maxPerRow: number): CardItem[][] => {
+  const rows: CardItem[][] = [];
+  let row = [];
+  let count = 0;
+  for (let i = 0; i < cards.length; i++) {
+    row.push(cards[i]);
+    count++;
+    if (count === maxPerRow || i === cards.length - 1) {
+      rows.push(row);
+      count = 0;
+      row = [];
+      maxPerRow = Math.min(maxPerRow, cards.length - rows.flat().length);
+    }
+  }
+  return rows;
+};
+
 const CardDeck: React.FC<CardDeckProps> = ({ cardDeckItem }) => {
+  const draggingId = useRef<string | null>(null);
+  const [topCardId, setTopCardId] = useState<string | null>(null);
+  const [rows, setRows] = useState<CardItem[][]>([]);
+
+  const calculateLayout = () => {
+    const viewport = window.innerWidth;
+    const maxCards = Math.floor((viewport - SIDE_PADDING) / (CARD_WIDTH - OVERLAP_X)) || 1;
+    const chunked = chunkCards(cardDeckItem || [], maxCards);
+    setRows(chunked);
+  };
+
+  useEffect(() => {
+    if (!cardDeckItem) return;
+    calculateLayout();
+    window.addEventListener('resize', calculateLayout);
+    return () => window.removeEventListener('resize', calculateLayout);
+  }, [cardDeckItem]);
+
   if (!cardDeckItem || cardDeckItem.length === 0) return null;
 
-  const draggingId            = useRef<string | null>(null);
-  const [topCardId, setTopCardId] = useState<string | null>(null);
-
   return (
-      <div className="container mx-auto px-4">
-        <div className="flex justify-center items-center" style={{ minHeight: CARD_H }}>
+    <section className="w-full py-12 overflow-visible">
+      <div className="container mx-auto px-4 max-w-[calc(100vw-32px)]">
+        {rows.map((row, rowIndex) => (
           <div
+            key={rowIndex}
+            className="flex justify-center items-start relative"
             style={{
-              position: 'relative',
-              width: 'fit-content',
-              height: CARD_H,
-              overflow: 'visible',
-              display: 'flex',
-              alignItems: 'center',
-              userSelect: 'none',
+              marginTop: rowIndex === 0 ? 0 : -OVERLAP_Y,
+              zIndex: 10 - rowIndex,
             }}
           >
-            {cardDeckItem.map((item, idx) => (
-              <DraggableCard
-                key={idx}
-                item={item}
-                index={idx}
-                draggingId={draggingId}
-                topCardId={topCardId}
-                setTopCardId={setTopCardId}
-              />
+            {row.map((item, index) => (
+              <div
+                key={`${rowIndex}-${index}`}
+                style={{ marginLeft: index === 0 ? 0 : `-${OVERLAP_X}px` }}
+              >
+                <DraggableCard
+                  item={item}
+                  index={index}
+                  draggingId={draggingId}
+                  topCardId={topCardId}
+                  setTopCardId={setTopCardId}
+                />
+              </div>
             ))}
           </div>
-        </div>
+        ))}
       </div>
+    </section>
   );
 };
 

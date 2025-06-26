@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && cp -R ./public/assets ./dist/assets",
+    "build": "astro build && cp -R ./assets ./dist/assets",
     "preview": "astro preview",
     "astro": "astro",
     "codegen": "graphql-codegen"

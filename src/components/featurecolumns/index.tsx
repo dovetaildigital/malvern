@@ -1,5 +1,7 @@
 import React from 'react';
 import type { ParsedStackItem as Item } from '@/types/imagestack';
+import type { FeatureLink, FeatureColumn } from '@/types/featurecolumns';
+import { ArrowCircleRightIcon } from '@phosphor-icons/react';
 
 interface ColumnImage {
   columnImagesStack: {
@@ -10,11 +12,6 @@ interface ColumnImage {
   } | null;
 }
 
-interface FeatureColumn {
-  columnText: string | null;
-  columnImages: Array<ColumnImage | null> | null;
-}
-
 interface FeatureColumnsProps {
   featureColumnsColumns: Array<FeatureColumn | null> | null;
   containerWidth?: string;
@@ -22,7 +19,7 @@ interface FeatureColumnsProps {
 
 const FeatureColumns: React.FC<FeatureColumnsProps> = ({ 
   featureColumnsColumns = [],
-  containerWidth = 'container-lg',
+  containerWidth = 'container-xl',
 }) => {
   if (!featureColumnsColumns || featureColumnsColumns.length === 0) {
     return null;
@@ -35,60 +32,50 @@ const FeatureColumns: React.FC<FeatureColumnsProps> = ({
   };
 
   return (
+    <section className="w-full featurecolumns">
       <div className={containerWidth}>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-x-12 md:gap-y-36">
-
-              {featureColumnsColumns.map((col, index) => {
+        <div className="grid grid-cols-1 p-4 md:p-0 md:grid-cols-3 gap-12 md:gap-x-12 md:gap-y-36">
+          {featureColumnsColumns.map((col, index) => {
             if (!col) return null;
-
-            const rawItems = (col.columnImages || []).map((img, idx) => {
-              const node = img?.columnImagesStack?.node;
-              if (!node?.sourceUrl) return null;
-              return {
-                id: `${index}-${idx}`,
-                src: node.sourceUrl,
-                alt: node.altText ?? ''
-              };
-            });
-
-            const items = rawItems.filter((item): item is Item => item !== null);
-
+            const { featureLink } = col;
+            
             return (
-              <div
-                key={index}
-                className={`
-                  flex flex-col gap-8
-                  ${
-                    index % 3 !== 0 // If not first in row
-                      ? '' 
-                      : ''
-                  }
-                `}
-              >
-                {items.length > 0 && (
-  <div className="relative h-[300px] w-full">
-    <img
-      src={items[0].src}
-      alt={items[0].alt || ''}
-      className="w-full h-full object-cover rounded-lg shadow-subtle mt-4"
-      style={{ 
-        transform: ``,
-        transition: 'transform 0.3s ease-in-out'
-      }}
-    />
-  </div>
-)}
+              <div key={index} className="flex flex-col items-center md:items-start space-y-4">
+                {col.columnImages?.map((img, imgIndex) => (
+                  <div key={imgIndex} className="w-full">
+                    {img?.sourceUrl && (
+                      <img
+                        src={img.sourceUrl}
+                        alt={img.altText || ''}
+                        className="w-full h-auto rounded-lg shadow-subtle aspect-square object-cover"
+                      />
+                    )}
+                  </div>
+                ))}
                 {col.columnText && (
                   <div 
                     className="prose max-w-none"
                     dangerouslySetInnerHTML={{ __html: col.columnText }} 
                   />
                 )}
+                {featureLink && featureLink.url && featureLink.title && (
+                  <div className="flex justify-start">
+                    <a 
+                      href={featureLink.url} 
+                      target={featureLink.target || '_self'} 
+                      className="btn btn-primary"
+                    >
+                      {featureLink.title}
+                    <ArrowCircleRightIcon size={32} className="h-5 w-5 flex-shrink-0" />
+                    </a>
+                  </div>
+                )}
               </div>
             );
           })}
         </div>
       </div>
+    </section>
   );
 };
 

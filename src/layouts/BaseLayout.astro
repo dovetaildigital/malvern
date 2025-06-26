@@ -64,10 +64,10 @@ const { siteOptions } = await client.request<{ siteOptions: { footer: FooterData
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
 
   </head>
-  <body class="bg-white text-slate-900">
+  <body class="bg-white">
     <div id="container" class="min-h-screen flex flex-col">
       <Header />
-<main class="flex-1 pt-[76px] md:pt-[88px]">
+      <main class="flex-1 pt-12 md:pt-24">
         <slot />  
       </main>
 

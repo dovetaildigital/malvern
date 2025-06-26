@@ -70,6 +70,11 @@ fragment FeatureColumnsFields on PageBuilderContentFeatureColumnsLayout {
         }
       }
     }
+    featureLink {
+      title
+      url
+      target
+    }
   }
 }
 
@@ -97,10 +102,22 @@ fragment ContactFormFields on PageBuilderContentContactFormLayout {
       ... on CustomForm {
         id
         title
+        formFields {
+          formFields {
+            formFieldName
+            formFieldLabel
+            formFieldType
+            formFieldsRequired
+            formFieldsPlaceholder
+            formFieldsOptions
+            formFieldsDefault
+          }
+        }
       }
     }
   }
 }
+
 
 fragment ContentFields on PageBuilderContent_Layout {
   __typename

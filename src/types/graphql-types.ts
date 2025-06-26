@@ -4634,6 +4634,8 @@ export type PageBuilderContentFeatureColumnsColumns = AcfFieldGroup & AcfFieldGr
   columnImages: Maybe<Array<Maybe<PageBuilderContentFeatureColumnsColumnsColumnImages>>>;
   /** Field of the &quot;wysiwyg&quot; Field Type added to the schema as part of the &quot;PageBuilderContentFeatureColumnsColumns&quot; Field Group */
   columnText: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;link&quot; Field Type added to the schema as part of the &quot;PageBuilderContentFeatureColumnsColumns&quot; Field Group */
+  featureLink: Maybe<AcfLink>;
   /**
    * The name of the field group
    * @deprecated Use __typename instead
@@ -4670,6 +4672,8 @@ export type PageBuilderContentFeatureColumnsColumnsFields = {
   columnImages: Maybe<Array<Maybe<PageBuilderContentFeatureColumnsColumnsColumnImages>>>;
   /** Field of the &quot;wysiwyg&quot; Field Type added to the schema as part of the &quot;PageBuilderContentFeatureColumnsColumns&quot; Field Group */
   columnText: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;link&quot; Field Type added to the schema as part of the &quot;PageBuilderContentFeatureColumnsColumns&quot; Field Group */
+  featureLink: Maybe<AcfLink>;
   /**
    * The name of the field group
    * @deprecated Use __typename instead
@@ -4714,8 +4718,6 @@ export type PageBuilderContentHeadlineLayout = AcfFieldGroup & AcfFieldGroupFiel
   headlineSize: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** Field of the &quot;text&quot; Field Type added to the schema as part of the &quot;PageBuilderContentHeadlineLayout&quot; Field Group */
   headlineText: Maybe<Scalars['String']['output']>;
-  /** Field of the &quot;select&quot; Field Type added to the schema as part of the &quot;PageBuilderContentHeadlineLayout&quot; Field Group */
-  paddingTop: Maybe<Array<Maybe<Scalars['String']['output']>>>;
 };
 
 /** Interface representing fields of the ACF &quot;PageBuilderContentHeadlineLayout&quot; Field Group */
@@ -4731,8 +4733,6 @@ export type PageBuilderContentHeadlineLayoutFields = {
   headlineSize: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** Field of the &quot;text&quot; Field Type added to the schema as part of the &quot;PageBuilderContentHeadlineLayout&quot; Field Group */
   headlineText: Maybe<Scalars['String']['output']>;
-  /** Field of the &quot;select&quot; Field Type added to the schema as part of the &quot;PageBuilderContentHeadlineLayout&quot; Field Group */
-  paddingTop: Maybe<Array<Maybe<Scalars['String']['output']>>>;
 };
 
 /** The &quot;PageBuilderContentHeroLayout&quot; Field Group. Added to the Schema by &quot;WPGraphQL for ACF&quot;. */
