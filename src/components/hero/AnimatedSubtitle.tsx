@@ -6,7 +6,7 @@ export default function AnimatedSubtitle({ text }: { text: string }) {
   return (
     <motion.p
       id="hero-strapline"
-      className="strapline relative z-10"
+      className="strapline relative z-10 text-center"
       initial={{ opacity: 0, y: 0 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: 'easeInOut', delay: 0.3 }}
