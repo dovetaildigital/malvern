@@ -43,7 +43,7 @@ const menu = data.siteOptions.headerMenu.mainMenu;
 <ul id="main-menu" class="flex gap-12 py-8 relative z-50">
   {menu.map(({ menuItem, submenu }) => (
     <li
-      class="relative"
+      class="relative group"
       data-has-submenu={Array.isArray(submenu) && submenu.length > 0}
     >
       <a
@@ -52,17 +52,21 @@ const menu = data.siteOptions.headerMenu.mainMenu;
       >
         {menuItem.title}
         {Array.isArray(submenu) && submenu.length > 0 && (
-          <i class="ph ph-arrow-down text-xs transition-transform duration-200 group-hover:rotate-180"></i>
-      )}
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        )}
       </a>
-
+      
       {Array.isArray(submenu) && submenu.length > 0 && (
-        <ul class="absolute left-0 top-full mt-2 p-4 min-w-[18rem] bg-gradient-background shadow-l border rounded-lg z-50 opacity-0 invisible scale-95 transition-all duration-200">
-          {submenu.map(({ link }: { link: { title: string; url: string } }) => (
+        <ul class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 
+                   invisible opacity-0 scale-95 group-hover:visible group-hover:opacity-100 group-hover:scale-100 
+                   transition-all duration-200 ease-out transform">
+          {submenu.map(({ link }) => (
             <li>
-              <a
-                href={link.url}
-                class="block px-4 py-2 text-sm hover:bg-background rounded-lg hover:font-medium transition-colors "
+              <a 
+                href={link.url} 
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               >
                 {link.title}
               </a>
