@@ -4,7 +4,9 @@ import { useEffect } from 'react';
 interface AnimatedTitleProps {
   title: string;
   pageKey?: string; // Changed from 'key' to 'pageKey'
+
 }
+
 
 export default function AnimatedTitle({ title, pageKey }: { title: string; pageKey?: string }) {
   return (

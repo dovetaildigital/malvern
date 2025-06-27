@@ -86,11 +86,11 @@ const textColorClass =
 
   <div class={`max-w-2xl w-full mx-auto flex flex-col gap-8`}>
     <div class="relative inline-block group w-full text-center" id="hero-area">
-      <AnimatedTitle client:load title={heroTitle} />
+      <AnimatedTitle client:load title={heroTitle} data-fade />
     </div>
 <div class="text-center">
     {heroSubtitle && (
-      <AnimatedSubtitle client:load text={heroSubtitle} />
+      <AnimatedSubtitle client:load text={heroSubtitle} data-fade />
     )}
 </div>
 <div class="text-center">
