@@ -27,14 +27,14 @@ export const TextColumns: React.FC<TextColumnsProps> = ({
   return (
     <section className="w-full px-4 py-18 lg:py-24">
       <div className={containerWidth}>
-        <div className="grid grid-cols-12 gap-6">
+        <div className="grid grid-cols-12 gap-6 gap-y-36 md:gap-y-6">
           {columnContent.map((column, index) => {
             const spanClass = column.columnWidth
               ? `col-span-12 md:${column.columnWidth}`
               : `col-span-12 md:col-span-6`;
 
             return (
-              <div key={index} className={spanClass}>
+              <div key={index} className={spanClass} data-fade>
                 <div dangerouslySetInnerHTML={{ __html: column.columnContent }} />
 
                 {column.columnButton?.buttonLink?.url && (

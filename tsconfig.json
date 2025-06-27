@@ -5,6 +5,7 @@
       "@/*": ["src/*"],
       "@ui/*": ["src/components/ui/*"]
     },
+    
     "jsx": "react-jsx",
     "jsxImportSource": "react"
   },

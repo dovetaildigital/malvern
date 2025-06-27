@@ -64,7 +64,7 @@ interface FieldProps {
   
       case 'checkbox':
         return (
-          <div className="flex items-center mb-4">
+          <div className="flex items-start mb-4">
             <input
               id={field.name}
               name={field.name}

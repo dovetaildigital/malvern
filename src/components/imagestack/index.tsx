@@ -178,7 +178,7 @@ function DraggableCard({
         }}
       />
       {(item.label || item.alt) && (
-        <div className="absolute bottom-2 left-2 px-2 py-1 text-white text-xl">
+        <div className="absolute bottom-2 left-2 px-2 py-1 text-background bg-foreground/50 rounded">
           {item.label || item.alt}
         </div>
       )}
@@ -239,7 +239,7 @@ export default function DragReorderWrapper({
               }}
             />
             {(item.label || item.alt) && (
-              <div className="absolute bottom-2 left-2 px-2 py-1 text-white text-xl">
+              <div className="absolute bottom-2 left-2 px-2 py-1 text-background bg-foreground/50 rounded">
                 {item.label || item.alt}
               </div>
             )}

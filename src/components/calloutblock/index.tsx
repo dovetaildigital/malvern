@@ -9,13 +9,14 @@ const CalloutBlock: React.FC<CalloutBlockProps> = ({ calloutItem }) => {
   }
 
   return (
-    <section className="w-full py-24">
+    <section className="w-full px-4 py-18 lg:py-24">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {calloutItem.map((item, index) => (
             <div 
               key={index}
-              className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col items-center"
+              className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col items-center"
+              data-fade
             >
               {item?.calloutIcon && (
                 <div className="text-3xl mb-4 text-blue-600">
@@ -26,12 +27,12 @@ const CalloutBlock: React.FC<CalloutBlockProps> = ({ calloutItem }) => {
                 </div>
               )}
               {item?.calloutHeadline && (
-                <h3 className="text-xl font-semibold mb-2">
+                <h3 className="heading-3 text-center">
                   {item.calloutHeadline}
                 </h3>
               )}
               {item?.calloutDescription && (
-                <p className="">
+                <p className="text-center">
                   {item.calloutDescription}
                 </p>
               )}

@@ -1,8 +1,9 @@
 // src/lib/icons.ts
 
-const iconModules = import.meta.glob('/public/assets/icons/phosphor/*.svg', {
+const iconModules = import.meta.glob('/assets/icons/phosphor/*.svg', {
   eager: true,
-  as: 'url'
+  query: 'url',
+  import: 'default'
 });
 
 const icons: Record<string, string> = {};

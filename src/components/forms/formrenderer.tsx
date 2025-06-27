@@ -54,7 +54,7 @@ export default function FormRenderer({
   };
 
   return (
-    <section>
+    <div>
         {submitted ? (
   <div className="bg-lightgrey border-fadedgrey border rounded-lg p-4 text-foreground space-y-4">
     <h4 className="heading-3">Nice to meet you{values.name ? `, ${values.name}` : ''}!</h4>
@@ -85,12 +85,13 @@ export default function FormRenderer({
             ))}
 
             {error && <p className="text-red-600">{error}</p>}
-
-            <Submit type="submit" variant="primary" className="flex justify-center">
+            <div className="flex justify-end">
+            <Submit type="submit" variant="primary" className="items-end flex justify-center">
               Send <Envelope className="w-6 h-6" />
             </Submit>
+            </div>
           </form>
         )}
-    </section>
+    </div>
   );
 }

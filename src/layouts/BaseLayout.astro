@@ -8,12 +8,12 @@ import MobileMenuWrapper from '../components/header/MobileMenuWrapper';
 import type { FooterData } from '../types';
 import client from '../lib/wp';
 import Footer from '../components/footer/index.astro';
+import { ClientRouter, fade, slide } from 'astro:transitions';
 
 const footerQuery = `
   query {
     siteOptions {
       footer {
-        footerEmail
         footerAddress
         footerCopyright
         telephone
@@ -56,12 +56,16 @@ const footerQuery = `
 const { siteOptions } = await client.request<{ siteOptions: { footer: FooterData } }>(footerQuery);
 
 ---
-<html lang="en">
+<html lang="en" data-astro-transition>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dovetail Digital</title>
+    <ClientRouter />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+    <link rel="stylesheet" href="/styles/view-transition.css" />
+    <script type="module" src="/scripts/view-transition-events.js"></script>
+    <script type="module" src="/scripts/view-transition-a11y.ts"></script>
 
   </head>
   <body class="bg-white">
@@ -73,5 +77,6 @@ const { siteOptions } = await client.request<{ siteOptions: { footer: FooterData
 
       <Footer footer={siteOptions.footer} />
     </div>
+    <script type="module" src="/scripts/scroll-fade.js"></script>
   </body>
 </html>

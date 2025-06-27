@@ -12,8 +12,8 @@ export default function FormBlock({
   intro?: string;
 }) {
   return (
-    <section className="max-w-xl mx-auto py-12 md:py-20">
-      <div className="container space-y-8">
+    <section className="max-w-xl mx-auto px-4 py-18 lg:py-24" data-fade>
+      <div className="container mx-auto p-8 space-y-8 bg-white rounded-lg shadow">
       {intro && (
         <div
           className="body"

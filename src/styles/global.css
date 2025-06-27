@@ -1,5 +1,6 @@
 @tailwind components;
 @tailwind utilities;
+@tailwind base;
 @layer components {
 
   .container-md {
@@ -20,42 +21,60 @@
   
 
   .heading-1 {
-    @apply text-[64px] leading-[64px] tracking-[-0.05em] font-extrabold font-inter-display text-foreground;
+    @apply text-[40px] leading-[44px] md:text-[64px] md:leading-[64px] tracking-[-0.05em] font-extrabold font-inter-display text-foreground;
   }
 
- .heading-2 {
-    @apply text-[48px] leading-[52px] tracking-[-0.125rem] font-semibold font-inter-display text-foreground pb-8;
+.heading-2, .heading-3, .heading-4, .blurb-title {
+  @apply text-center md:text-left 
+  text-[24px] leading-[28px] tracking-tight 
+}
+
+.heading-2 {
+    @apply md:text-[48px] md:leading-[52px] md:tracking-[-0.125rem] 
+    font-semibold font-inter-display text-foreground 
+    pb-4;
   }
 
 .heading-3 {
-    @apply text-[32px] leading-[40px] tracking-[-0.0625rem] font-semibold font-inter-display text-foreground;
+    @apply md:text-[32px] md:leading-[40px] md:tracking-[-0.0625rem] 
+    font-semibold font-inter-display text-foreground
+    pb-4;
   }
 
-.heading-4,
-  .card-label {
-    @apply text-[20px] leading-[28px] tracking-[0.25px] font-medium font-inter-display text-foreground;
+.heading-4, .card-label {
+    @apply text-center md:text-left 
+    md:text-[20px] md:leading-[28px] md:tracking-[0.25px] 
+    font-medium font-inter-display text-foreground;
   }
 
 p.body {
-    @apply text-[16px] leading-[24px] font-normal font-inter text-foreground pb-4;
+    @apply text-center md:text-left text-[16px] leading-[24px] tracking-normal font-normal font-inter text-foreground pb-4;
   }
- 
-
 
   .strapline {
-    @apply text-[18px] leading-[26px] tracking-[0.05em] font-semibold font-inter-display text-foreground;
+    @apply text-center md:text-left text-[18px] leading-[26px] tracking-[0.05em] font-semibold font-inter-display text-foreground;
   }
 
   .blurb-title {
-    @apply text-[24px] leading-[32px] font-semibold font-inter text-foreground pb-4;
+    @apply md:text-[24px] md:leading-[32px] 
+    font-semibold font-inter text-foreground 
+    pb-4;
   }
 
   .blurb-body {
-    @apply text-[16px] leading-[24px] font-normal font-inter text-foreground pb-4;
+    @apply text-center md:text-left 
+    text-[16px] leading-[24px] 
+    font-normal font-inter text-foreground pb-4;
   }
 
   .card-body {
-    @apply text-[14px] leading-[22px] tracking-[0.25px] font-medium font-inter-display text-foreground;
+    @apply text-center md:text-left text-[14px] leading-[22px] tracking-[0.25px] font-medium font-inter-display text-foreground;
+  }
+
+  .contact-intro {
+    @apply md:text-[24px] md:leading-[32px] 
+    font-semibold font-inter text-foreground 
+    pb-4;
   }
 
   .button {
@@ -218,5 +237,41 @@ p.body {
   }
 }
 
+}
 
+@layer base {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 300ms;
+    animation-timing-function: ease-in-out;
+  }
+
+  ::view-transition-old(root) {
+    opacity: 1;
+    animation-name: fade-out;
+  }
+
+  ::view-transition-new(root) {
+    opacity: 0;
+    animation-name: fade-in;
+  }
+
+  @keyframes fade-in {
+    to { opacity: 1; }
+  }
+
+  @keyframes fade-out {
+    to { opacity: 0; }
+  }
+}
+
+[data-fade] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s ease-out, transform 1s ease-out;
+}
+
+[data-fade].visible {
+  opacity: 1;
+  transform: none;
 }

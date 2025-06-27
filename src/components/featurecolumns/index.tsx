@@ -32,17 +32,17 @@ const FeatureColumns: React.FC<FeatureColumnsProps> = ({
   };
 
   return (
-    <section className="w-full featurecolumns">
+    <section className="w-full px-4 py-18 lg:py-24 featurecolumns">
       <div className={containerWidth}>
-        <div className="grid grid-cols-1 p-4 md:p-0 md:grid-cols-3 gap-12 md:gap-x-12 md:gap-y-36">
+        <div className="grid grid-cols-1 p-4 md:p-0 md:grid-cols-3 gap-12 gap-y-24 md:gap-x-12 md:gap-y-36">
           {featureColumnsColumns.map((col, index) => {
             if (!col) return null;
             const { featureLink } = col;
             
             return (
-              <div key={index} className="flex flex-col items-center md:items-start space-y-4">
+              <div key={index} className="flex flex-col items-center md:items-start space-y-4" data-fade>
                 {col.columnImages?.map((img, imgIndex) => (
-                  <div key={imgIndex} className="w-full">
+                  <div key={imgIndex} className="w-1/2 md:w-full">
                     {img?.sourceUrl && (
                       <img
                         src={img.sourceUrl}
@@ -59,18 +59,17 @@ const FeatureColumns: React.FC<FeatureColumnsProps> = ({
                   />
                 )}
            {featureLink?.url && featureLink?.title && (
-  <div className="flex justify-start">
-    <a
-      href={featureLink.url}
-      target={featureLink.target || '_self'}
-      className="btn btn-primary"
-      rel={featureLink.target === '_blank' ? 'noopener noreferrer' : undefined}
-    >
-      {featureLink.title}
-      <ArrowCircleRightIcon size={32} className="h-5 w-5 flex-shrink-0 ml-2" />
-    </a>
-  </div>
-
+                <div className="flex justify-start">
+                  <a
+                    href={featureLink.url}
+                    target={featureLink.target || '_self'}
+                    className="btn btn-primary"
+                    rel={featureLink.target === '_blank' ? 'noopener noreferrer' : undefined}
+                  >
+                    {featureLink.title}
+                    <ArrowCircleRightIcon size={32} className="h-5 w-5 flex-shrink-0 ml-2" />
+                  </a>
+                </div>
                 )}
               </div>
             );

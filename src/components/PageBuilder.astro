@@ -85,7 +85,7 @@ const blocks: PageBuilderBlock[] = contentBlocks.filter(isPageBuilderBlock);
 
       case 'PageBuilderContentImageStackLayout': {
         const items = block.imageStack?.filter(Boolean).map(parseStackItem) ?? [];
-        return <ImageStack items={items} client:load />;
+        return <section class="py-24"><ImageStack items={items} client:load /></section>;
       }
 
       case 'PageBuilderContentHeadlineLayout': {

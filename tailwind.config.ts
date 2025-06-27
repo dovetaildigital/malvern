@@ -44,6 +44,10 @@ export default {
     'md:w-3/4',
     'blurb-title',
     'blurb-body',
+    {
+      pattern: /::view-transition-.+/,
+      variants: ['root']
+    }
   ],
   theme: {
     extend: {
@@ -70,6 +74,9 @@ export default {
         sans: ['Inter', 'sans-serif'],
         'inter-display': ['"Inter Display"', 'sans-serif'],
         inter: ['Inter', 'sans-serif'],
+      },
+      fontSize: {
+        xs: '12px',
       },
       borderRadius: {
         xl: '1rem',
