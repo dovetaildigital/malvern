@@ -1,19 +1,17 @@
 // public/scripts/scroll-fade.js
-// Animates elements with [data-fade] on initial load, scroll, and after Astro SPA navigation
-
-// Confirm script is loaded
-console.log('[ScrollFade] script loaded');
+console.log('[ScrollFade] Script loaded');
 
 function initScrollFade() {
+  console.log('[ScrollFade] Initializing...');
   const fadeEls = document.querySelectorAll('[data-fade]');
-  console.log('[ScrollFade] init, found', fadeEls.length, 'elements');
+  console.log(`[ScrollFade] Found ${fadeEls.length} elements`);
+
   if (!fadeEls.length) return;
 
   const observer = new IntersectionObserver((entries, obs) => {
     entries.forEach(entry => {
-      console.log('[ScrollFade] intersection change', entry.target, entry.isIntersecting);
       if (entry.isIntersecting) {
-        console.log('[ScrollFade] adding visible to', entry.target);
+        console.log('[ScrollFade] Element in view:', entry.target);
         entry.target.classList.add('visible');
         obs.unobserve(entry.target);
       }
@@ -21,25 +19,40 @@ function initScrollFade() {
   }, { threshold: 0.1 });
 
   fadeEls.forEach(el => {
+    if (el.classList.contains('visible')) return;
+    
     const rect = el.getBoundingClientRect();
-    console.log('[ScrollFade] rect for', el, rect);
-    if (rect.top < window.innerHeight && rect.bottom > 0) {
-      console.log('[ScrollFade] element in view, adding visible', el);
+    const isInView = rect.top < window.innerHeight && rect.bottom > 0;
+    
+    if (isInView) {
+      console.log('[ScrollFade] Element already in view:', el);
       el.classList.add('visible');
     } else {
-      console.log('[ScrollFade] observing element', el);
+      console.log('[ScrollFade] Observing element:', el);
       observer.observe(el);
     }
   });
 }
 
-// Run on initial load or immediately if already ready
-document.readyState === 'loading'
-  ? document.addEventListener('DOMContentLoaded', initScrollFade)
-  : initScrollFade();
+// Initialize immediately if DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('[ScrollFade] DOM loaded, initializing');
+    initScrollFade();
+  });
+} else {
+  console.log('[ScrollFade] DOM already loaded, initializing');
+  initScrollFade();
+}
 
-// Re-run after Astro client-side navigation
-window.addEventListener('astro:after-swap', () => {
-  console.log('[ScrollFade] astro:after-swap triggered');
+// Handle Astro's view transitions
+document.addEventListener('astro:page-load', () => {
+  console.log('[ScrollFade] Astro page-load event');
+  requestAnimationFrame(initScrollFade);
+});
+
+// Also listen for after-swap as a fallback
+document.addEventListener('astro:after-swap', () => {
+  console.log('[ScrollFade] Astro after-swap event');
   requestAnimationFrame(initScrollFade);
 });

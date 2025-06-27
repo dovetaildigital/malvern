@@ -66,7 +66,7 @@ const { siteOptions } = await client.request<{ siteOptions: { footer: FooterData
     <link rel="stylesheet" href="/styles/view-transition.css" />
     <script type="module" src="/scripts/view-transition-events.js"></script>
     <script type="module" src="/scripts/view-transition-a11y.ts"></script>
-
+    <script type="module" src="/scripts/scroll-fade.js"></script>
   </head>
   <body class="bg-white">
     <div id="container" class="min-h-screen flex flex-col">
@@ -77,6 +77,5 @@ const { siteOptions } = await client.request<{ siteOptions: { footer: FooterData
 
       <Footer footer={siteOptions.footer} />
     </div>
-    <script type="module" src="/scripts/scroll-fade.js"></script>
   </body>
 </html>
