@@ -34,7 +34,7 @@ font-weight: 800;
 }
 
 .heading-2, .heading-3, .heading-4, .blurb-title {
-  @apply text-center md:text-left text-[24px] leading-[28px] tracking-tight;
+  @apply text-center md:text-left text-lg leading-[28px] tracking-tight;
   -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
 }
 
@@ -67,7 +67,7 @@ p.body {
   }
 
   .blurb-title {
-    @apply md:text-[24px] md:leading-[32px] -tracking-[0.18em] 
+    @apply md:text-[24px] md:leading-[32px] -tracking-[0.07em] 
     font-semibold font-inter-variable text-foreground 
     pb-4;
   }
