@@ -1,7 +1,18 @@
-import { motion } from 'framer-motion';
-import React from 'react';
+import { motion, useAnimation } from 'framer-motion';
+import React, { useEffect } from 'react';
 
-export default function AnimatedTitle({ title }: { title: string }) {
+export default function AnimatedTitle({ title, key }: { title: string; key?: string }) {
+  const controls = useAnimation();
+
+  // Reset animation when component mounts or key changes
+  useEffect(() => {
+    controls.start({
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: 'easeInOut' }
+    });
+  }, [title, key, controls]);
+
   return (
     <motion.h1
       id="hero-heading"

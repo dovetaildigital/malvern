@@ -48,8 +48,7 @@ const {
   heroSecondaryCtaIcon
 } = Astro.props as HeroProps;
 
-
-
+const path = Astro.url.pathname;
 
 const unwrap = (val: string[] | undefined, fallback = ''): string =>
   Array.isArray(val) ? val[0] ?? fallback : fallback;
@@ -86,7 +85,7 @@ const textColorClass =
 
   <div class={`max-w-2xl w-full mx-auto flex flex-col gap-8`}>
     <div class="relative inline-block group w-full text-center" id="hero-area">
-      <AnimatedTitle client:load title={heroTitle} />
+      <AnimatedTitle client:load title={heroTitle} key={path} />
     </div>
 <div class="text-center">
     {heroSubtitle && (
