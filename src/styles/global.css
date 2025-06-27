@@ -34,18 +34,18 @@ font-weight: 800;
 }
 
 .heading-2, .heading-3, .heading-4, .blurb-title {
-  @apply text-center md:text-left text-lg leading-[28px] tracking-tight;
+  @apply text-center md:text-left text-[26px] leading-[28px] tracking-tight;
   -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
 }
 
 .heading-2 {
-    @apply md:text-[48px] md:leading-[52px] tracking-[-0.2rem] 
+    @apply md:text-[48px] md:leading-[52px] tracking-[-0.07em] 
     font-semibold font-inter-variable text-foreground 
     pb-4;
   }
 
 .heading-3 {
-    @apply md:text-[32px] md:leading-[40px] tracking-[-0.18rem] 
+    @apply md:text-[32px] md:leading-[40px] tracking-[-0.07rem] 
     font-semibold font-inter-variable text-foreground
     pb-4;
   }
