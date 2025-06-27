@@ -21,12 +21,14 @@
   
 
   .heading-1 {
-    @apply text-[40px] leading-[44px] md:text-[64px] md:leading-[64px] tracking-[-0.05em] font-extrabold font-inter-display text-foreground;
+  @apply text-[40px] leading-[44px] md:text-[64px] md:leading-[64px] 
+  tracking-[-0.05em] font-extrabold font-inter-display text-foreground;
   }
 
 .heading-2, .heading-3, .heading-4, .blurb-title {
   @apply text-center md:text-left 
-  text-[24px] leading-[28px] tracking-tight 
+  text-[24px] leading-[28px] tracking-tight
+  font-extrabold
 }
 
 .heading-2 {
