@@ -1,32 +1,31 @@
-import { motion, useAnimation } from 'framer-motion';
-import React, { useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { useEffect } from 'react';
 
-export default function AnimatedTitle({ title, key }: { title: string; key?: string }) {
-  const controls = useAnimation();
+interface AnimatedTitleProps {
+  title: string;
+  pageKey?: string; // Changed from 'key' to 'pageKey'
+}
 
-  // Reset animation when component mounts or key changes
-  useEffect(() => {
-    controls.start({
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: 'easeInOut' }
-    });
-  }, [title, key, controls]);
-
+export default function AnimatedTitle({ title, pageKey }: { title: string; pageKey?: string }) {
   return (
     <motion.h1
-      id="hero-heading"
+      data-gradient-target
       className="heading-1 relative z-10 overflow-visible pb-2"
-      initial={{ opacity: 0, y: 0 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: 'easeInOut' }}
+      transition={{ 
+        duration: 0.6, 
+        ease: 'easeInOut',
+        delay: 0.1
+      }}
+      key={pageKey}
     >
       {title}
       <span
-        id="gradient-overlay-title"
+        data-gradient-overlay
         className="pointer-events-none absolute left-0 top-0 w-full h-[120%] text-transparent 
-                   bg-[linear-gradient(65deg,#DCF94D_0%,#FF4FA1_50%,#543DC6_100%)] 
-                   bg-clip-text transition-opacity duration-300 opacity-100"
+                 bg-[linear-gradient(65deg,#DCF94D_0%,#FF4FA1_50%,#543DC6_100%)] 
+                 bg-clip-text transition-opacity duration-300 opacity-100"
         style={{
           maskImage: 'radial-gradient(circle 300px at center, white 0%, rgba(255,255,255,0.4) 60%, transparent 100%)',
           WebkitMaskImage: 'radial-gradient(circle 300px at center, white 0%, rgba(255,255,255,0.4) 60%, transparent 100%)',

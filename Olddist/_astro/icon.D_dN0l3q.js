@@ -1,0 +1,1 @@
+import{j as i}from"./jsx-runtime.D_zvdyIk.js";import"./index.BVOCwoKb.js";const n=Object.assign({}),c={};for(const s in n){const o=(s.split("/").pop()||"").replace(/\.svg$/,"");c[o]=n[s]}const l=({icon:s,className:t})=>{const o=c[s];return o?i.jsx("img",{src:o,alt:"","aria-hidden":!0,className:t||"w-4 h-4"}):null};export{l as I};

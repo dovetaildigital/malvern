@@ -71,9 +71,16 @@ const textColorClass =
     : textTheme === 'light'
     ? 'text-white'
     : 'text-inherit';
+    const bgStyle = bgType === 'color' && heroBackgroundColor
+  ? `background-color: ${heroBackgroundColor};`
+  : '';
 ---
-<section class={`hero relative overflow-hidden ${layoutClass} px-6 flex flex-col justify-center ${bgClass} ${textColorClass}`}>
-  {heroImage?.node?.sourceUrl && (
+<section 
+  data-hero-gradient
+  class={`hero relative overflow-hidden ${layoutClass} px-6 flex flex-col justify-center ${bgClass} ${textColorClass}`}
+  style={bgStyle}
+>  
+{heroImage?.node?.sourceUrl && (
     <>
       <div
         class="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat bg-fixed"
@@ -85,11 +92,11 @@ const textColorClass =
 
   <div class={`max-w-2xl w-full mx-auto flex flex-col gap-8`}>
     <div class="relative inline-block group w-full text-center" id="hero-area">
-      <AnimatedTitle client:load title={heroTitle} key={path} />
+      <AnimatedTitle client:load title={heroTitle} pageKey={path} />
     </div>
 <div class="text-center">
     {heroSubtitle && (
-      <AnimatedSubtitle client:load text={heroSubtitle} />
+      <AnimatedSubtitle client:load text={heroSubtitle} pageKey={path} />
     )}
 </div>
 <div class="text-center">
@@ -116,42 +123,3 @@ alignment="center"
 
   </div>
 </section>
-
-<script type="module">
-  const overlayTitle = document.getElementById('gradient-overlay-title');
-  const overlaySubtitle = document.getElementById('gradient-overlay-subtitle');
-  const heading = document.getElementById('hero-heading');
-  const strapline = document.getElementById('hero-strapline');
-
-  const maskSize = 480;
-  const radius = maskSize / 2;
-
-  document.addEventListener('mousemove', (e) => {
-    if (overlayTitle && heading) {
-      const rect = heading.getBoundingClientRect();
-      const x = e.clientX - rect.left - radius;
-      const y = e.clientY - rect.top - radius;
-      overlayTitle.style.maskPosition = `${x}px ${y}px`;
-      overlayTitle.style.webkitMaskPosition = `${x}px ${y}px`;
-    }
-
-    if (overlaySubtitle && strapline) {
-      const rect = strapline.getBoundingClientRect();
-      const x = e.clientX - rect.left - radius;
-      const y = e.clientY - rect.top - radius;
-      overlaySubtitle.style.maskPosition = `${x}px ${y}px`;
-      overlaySubtitle.style.webkitMaskPosition = `${x}px ${y}px`;
-    }
-  });
-
-  document.addEventListener('mouseleave', () => {
-    if (overlayTitle) {
-      overlayTitle.style.maskPosition = `-9999px -9999px`;
-      overlayTitle.style.webkitMaskPosition = `-9999px -9999px`;
-    }
-    if (overlaySubtitle) {
-      overlaySubtitle.style.maskPosition = `-9999px -9999px`;
-      overlaySubtitle.style.webkitMaskPosition = `-9999px -9999px`;
-    }
-  });
-</script>
