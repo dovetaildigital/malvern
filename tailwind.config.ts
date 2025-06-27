@@ -71,9 +71,7 @@ export default {
         secondary: '#FF6A3D',
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        'inter-display': ['"Inter Display"', 'sans-serif'],
-        inter: ['Inter', 'sans-serif'],
+        sans: ['inter-variable', 'sans-serif'],
       },
       fontSize: {
         xs: '12px',
