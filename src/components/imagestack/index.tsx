@@ -1,5 +1,3 @@
-// src/components/DragReorderWrapper.tsx
-
 import React, { useRef, useState, useMemo, useEffect } from 'react'
 import {
   motion,
@@ -16,7 +14,7 @@ interface Item {
 }
 
 const ITEM_WIDTH = 300
-const ITEM_HEIGHT = 300 // More square
+const ITEM_HEIGHT = 300
 const MOBILE_SPREAD = 8
 const DESKTOP_OVERLAP = 120
 
@@ -32,13 +30,14 @@ function seededRandom(seed: number): number {
 }
 
 function useIsDesktop() {
-  const [isDesktop, setIsDesktop] = useState(() =>
-    typeof window === 'undefined' ? true : window.innerWidth >= 768
-  )
+  const [isDesktop, setIsDesktop] = useState(false)
 
   useEffect(() => {
+    if (typeof window === 'undefined') return
+    
     const update = () => setIsDesktop(window.innerWidth >= 768)
     update()
+    
     window.addEventListener('resize', update)
     return () => window.removeEventListener('resize', update)
   }, [])
@@ -77,6 +76,44 @@ function DraggableCard({
     [seed, isDesktop]
   )
 
+  const cardStyle = useMemo(() => {
+    const isDragging = draggingId.current === item.id
+    return {
+      // Layout properties
+      width: ITEM_WIDTH,
+      height: ITEM_HEIGHT,
+      top: 0,
+      left: `${index * MOBILE_SPREAD}px`,
+      marginLeft: index === 0 ? 0 : -DESKTOP_OVERLAP,
+      zIndex: zOrder.indexOf(item.id) + 1,
+      
+      // Visual styling
+      borderRadius: 16,
+      backgroundColor: 'white',
+      boxShadow: isDragging 
+        ? '0 25px 50px rgba(0,0,0,0.35)'
+        : '0 10px 20px rgba(0,0,0,0.15)',
+      overflow: 'hidden',
+      
+      // Interaction
+      touchAction: 'none' as const,
+      userSelect: 'none' as const,
+      
+      // Flex
+      display: 'flex' as const,
+      flexDirection: 'column' as const,
+      
+      // Animation
+      transition: 'box-shadow 0.2s ease',
+      
+      // Framer Motion specific
+      position: 'relative' as const,
+      x: 0,
+      y: 0,
+      rotate: 0,
+    } as const // Add this to make the entire object readonly
+  }, [draggingId.current, index, item.id, zOrder])
+  
   useEffect(() => {
     const timeout = setTimeout(() => {
       controls.start({
@@ -137,34 +174,8 @@ function DraggableCard({
       onTap={handleTap}
       role="button"
       aria-grabbed={draggingId.current === item.id}
-      className={`
-        absolute
-        md:relative
-        md:left-auto
-        md:top-auto
-      `}
-      style={{
-        x,
-        y,
-        width: ITEM_WIDTH,
-        height: ITEM_HEIGHT,
-        top: 0,
-        left: `${index * MOBILE_SPREAD}px`,
-        marginLeft: index === 0 ? 0 : -DESKTOP_OVERLAP,
-        zIndex: zOrder.indexOf(item.id) + 1,
-        borderRadius: 16,
-        backgroundColor: 'white',
-        boxShadow:
-          draggingId.current === item.id
-            ? '0 25px 50px rgba(0,0,0,0.35)'
-            : '0 10px 20px rgba(0,0,0,0.15)',
-        overflow: 'hidden',
-        touchAction: 'none',
-        userSelect: 'none',
-        display: 'flex',
-        flexDirection: 'column',
-        transition: 'box-shadow 0.2s ease',
-      }}
+      className="absolute md:relative md:left-auto md:top-auto"
+      style={cardStyle}
     >
       <img
         src={item.src}
@@ -209,42 +220,46 @@ export default function DragReorderWrapper({
       }}
     >
       <div className="relative md:hidden h-full">
-        {items.map((item, i) => (
-          <motion.div
-            key={item.id}
-            style={{
-              position: 'absolute',
-              width: ITEM_WIDTH,
-              height: ITEM_HEIGHT,
-              top: 0,
-              left: '50%',
-              transform: `translateX(-50%) translateX(${i * MOBILE_SPREAD}px)`,
-              zIndex: i,
-              borderRadius: 16,
-              backgroundColor: 'white',
-              boxShadow: '0 10px 20px rgba(0,0,0,0.15)',
-              overflow: 'hidden',
-              userSelect: 'none',
-            }}
-          >
-            <img
-              src={item.src}
-              alt={item.alt || ''}
-              draggable={false}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                const tgt = e.target as HTMLImageElement
-                tgt.onerror = null
-                tgt.src = 'data:image/svg+xml;base64,...'
-              }}
-            />
-            {(item.label || item.alt) && (
-              <div className="absolute bottom-2 left-2 px-2 py-1 text-background bg-foreground/50 rounded">
-                {item.label || item.alt}
-              </div>
-            )}
-          </motion.div>
-        ))}
+        {items.map((item, i) => {
+          const style = {
+            position: 'absolute' as const,
+            width: ITEM_WIDTH,
+            height: ITEM_HEIGHT,
+            top: 0,
+            left: '50%',
+            transform: `translateX(-50%) translateX(${i * MOBILE_SPREAD}px)`,
+            zIndex: i,
+            borderRadius: 16,
+            backgroundColor: 'white',
+            boxShadow: '0 10px 20px rgba(0,0,0,0.15)',
+            overflow: 'hidden',
+            userSelect: 'none' as const,
+          }
+
+          return (
+            <motion.div
+              key={item.id}
+              style={style}
+            >
+              <img
+                src={item.src}
+                alt={item.alt || ''}
+                draggable={false}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  const tgt = e.target as HTMLImageElement
+                  tgt.onerror = null
+                  tgt.src = 'data:image/svg+xml;base64,...'
+                }}
+              />
+              {(item.label || item.alt) && (
+                <div className="absolute bottom-2 left-2 px-2 py-1 text-background bg-foreground/50 rounded">
+                  {item.label || item.alt}
+                </div>
+              )}
+            </motion.div>
+          )
+        })}
       </div>
 
       <div className="hidden md:flex justify-center items-center h-full relative">

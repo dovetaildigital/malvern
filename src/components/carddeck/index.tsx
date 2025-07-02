@@ -129,7 +129,7 @@ const CardDeck: React.FC<CardDeckProps> = ({ cardDeckItem }) => {
 
   return (
     <section className="w-full py-12 overflow-visible">
-      <div className="container mx-auto px-4 max-w-[calc(100vw-32px)]">
+      <div className="container mx-auto px-4 max-w-[calc(100vw-32px)]" data-fade>
         {rows.map((row, rowIndex) => (
           <div
             key={rowIndex}

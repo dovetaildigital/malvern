@@ -1,5 +1,19 @@
 # src/queries/GetPage.graphql
 
+fragment SeoSettingsFields on SeoSettings {
+  seoTitle
+  seoDescription
+  seoCanonical
+  seoIndex
+  seoImage {
+    node {
+      sourceUrl
+      altText
+    }
+  }
+}
+
+
 fragment HeroFields on PageBuilderContentHeroLayout {
   heroType
   heroTitle
@@ -56,6 +70,26 @@ fragment TextFields on PageBuilderContentTextLayout {
       buttonIcon
       buttonStyle
     }
+    columnLinkedForm {
+      nodes {
+        __typename
+        ... on CustomForm {
+          id
+          title
+          formFields {
+            formFields {
+              formFieldName
+              formFieldLabel
+              formFieldType
+              formFieldsRequired
+              formFieldsPlaceholder
+              formFieldsOptions
+              formFieldsDefault
+            }
+          }
+        }
+      }
+    }
   }
 }
 
@@ -94,9 +128,52 @@ fragment CardDeckFields on PageBuilderContentCardDeckLayout {
   }
 }
 
+fragment AccordionFields on PageBuilderContentAccordionLayout {
+  accordion {
+    accordionHeadline
+    accordionContent
+  }
+}
+
+fragment CarouselFields on PageBuilderContentCarouselLayout {
+  carouselAutoplayBehaviour
+  carouselShowNavigationArrows
+  carouselInterval
+  carouselSpeed
+  carouselLoop
+  carouselPauseOnHover
+  carouselEffect
+  carouselPaginationDots
+  carouselSlidesPerView
+  carouselSlidesToScroll
+  carouselBreakpoints {
+    carouselBreakpointsMobile
+    carouselBreakpointsTablet
+    carouselBreakpointsDesktop
+  }
+  carouselLazyLoad
+  carouselContents {
+    carouselContentsImage {
+      node {
+        sourceUrl
+        altText
+      }
+    }
+    carouselContentsCaption
+    carouselContentsLink {
+      url
+      title
+      target
+    }
+  }
+}
+
+
 fragment ContactFormFields on PageBuilderContentContactFormLayout {
+  formContainerWidth
   formIntro
-  linkedForm {
+  linkedForm
+  {
     node {
       __typename
       ... on CustomForm {
@@ -145,11 +222,35 @@ fragment ContentFields on PageBuilderContent_Layout {
   ... on PageBuilderContentContactFormLayout {
     ...ContactFormFields
   }
+  ... on PageBuilderContentAccordionLayout {
+    ...AccordionFields
+  }
+  ... on PageBuilderContentCarouselLayout {
+    ...CarouselFields
+  }
+}
+
+
+query GetPageAndSEO($slug: ID!) {
+  page(id: $slug, idType: URI) {
+    title
+    seoSettings {
+      ...SeoSettingsFields
+    }
+  }
+  globalSeoSettings {
+    seoSettings {
+      ...SeoSettingsFields
+    }
+  }
 }
 
 query GetPage($id: ID!, $idType: PageIdType!) {
   page(id: $id, idType: $idType) {
     title
+    seoSettings {
+      ...SeoSettingsFields
+    }
     pageBuilder {
       content {
         __typename

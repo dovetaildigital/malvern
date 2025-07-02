@@ -1,0 +1,56 @@
+---
+import { type SeoSettings } from '@/types/graphql-types'
+
+interface Props {
+  seoSettings?: SeoSettings | null
+  globalSeoSettings: SeoSettings
+  fallbackTitle: string
+}
+const { seoSettings, globalSeoSettings, fallbackTitle } = Astro.props as Props
+
+const {
+  seoTitle,
+  seoDescription,
+  seoCanonical,
+  seoIndex,
+  seoImage
+} = seoSettings ?? {}
+
+const {
+  seoTitle: globalTitle,
+  seoDescription: globalDescription,
+  seoCanonical: globalCanonical,
+  seoIndex: globalNoindex,
+  seoImage: globalImage
+} = globalSeoSettings
+
+const title = seoTitle || globalTitle || fallbackTitle
+const description = seoDescription || globalDescription || ''
+const canonical = seoCanonical || globalCanonical || undefined
+const noindex = seoIndex ?? globalNoindex ?? false
+
+const image = seoImage?.node || globalImage?.node || null
+---
+
+<head>
+    <title>{title}</title>
+  
+    <meta name="description" content={description} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+  
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {image?.sourceUrl && <meta property="og:image" content={image.sourceUrl} />}
+    {image?.altText && <meta property="og:image:alt" content={image.altText} />}
+    {canonical && <meta property="og:url" content={canonical} />}
+    <meta property="og:type" content="website" />
+  
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {image?.sourceUrl && <meta name="twitter:image" content={image.sourceUrl} />}
+    {image?.altText && <meta name="twitter:image:alt" content={image.altText} />}
+  </head>  

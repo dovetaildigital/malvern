@@ -4,7 +4,7 @@ function initGradientOverlay() {
     const heroSections = document.querySelectorAll('[data-hero-gradient]');
     
     if (heroSections.length === 0) {
-      console.log('No hero sections with gradient found');
+//console.log('No hero sections with gradient found');
       return null;
     }
   

@@ -2,19 +2,29 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageBuilder from '@/components/PageBuilder.astro';
 import { fetchPageData } from '@/lib/fetchPageData';
-import { PageIdType } from '@/types/graphql-types';
+import { fetchAllPageSlugs } from '@/lib/fetchAllPageSlugs';
+import { PageIdType, type SeoSettings } from '@/types/graphql-types';
+import { fetchGlobalSeoSettings } from '@/utils/fetchGlobalSeoSettings';
 
 const page = await fetchPageData('home', PageIdType.URI);
+const global = await fetchGlobalSeoSettings();
 
 if (!page) {
   throw new Error('Page not found');
 }
 
-const { title, pageBuilder } = page;
-const rawBlocks = pageBuilder?.content ?? [];
+const { title, pageBuilder, seoSettings: rawSeoSettings } = page;
+const seoSettings = rawSeoSettings as SeoSettings | null;
 
+const rawBlocks = pageBuilder?.content ?? [];
 ---
 
-<BaseLayout title={title}>
+<BaseLayout
+  title={title ?? ''}
+  fallbackTitle={title ?? 'Home'}
+  seoSettings={seoSettings}
+  globalSeoSettings={global.seoSettings}
+  titleSuffix=" | Dovetail Digital"
+>
   <PageBuilder contentBlocks={rawBlocks} /> 
 </BaseLayout>

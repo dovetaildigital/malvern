@@ -8,7 +8,20 @@ import MobileMenuWrapper from '../components/header/MobileMenuWrapper';
 import type { FooterData } from '../types';
 import client from '../lib/wp';
 import Footer from '../components/footer/index.astro';
-import { ClientRouter, fade, slide } from 'astro:transitions';
+import { resolveSeo } from '@/utils/resolveSeo';
+import SeoHead from '../components/seoSettings/index.astro';
+import type { SeoSettings } from '@/types/graphql-types';
+
+import { ClientRouter } from 'astro:transitions';
+
+export interface Props {
+  seoSettings?: SeoSettings | null
+  globalSeoSettings: SeoSettings
+  fallbackTitle: string
+  titleSuffix?: string
+  title?: string
+  children?: any
+}
 
 const footerQuery = `
   query {
@@ -54,17 +67,34 @@ const footerQuery = `
 `;
 
 const { siteOptions } = await client.request<{ siteOptions: { footer: FooterData } }>(footerQuery);
+const { seoSettings, globalSeoSettings, fallbackTitle, titleSuffix } = Astro.props as Props;
 
+const resolved = resolveSeo({
+  seo: seoSettings,
+  global: globalSeoSettings,
+  fallbackTitle,
+  titleSuffix
+});
 ---
+
 <html lang="en" data-astro-transition>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dovetail Digital</title>
+    <title>{resolved.title}</title>
+
+    <SeoHead
+      seoSettings={seoSettings}
+      globalSeoSettings={globalSeoSettings}
+      fallbackTitle={fallbackTitle}
+    />
+
     <ClientRouter />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
     <link rel="stylesheet" href="/styles/view-transition.css" />
-    <link rel="stylesheet" href="https://use.typekit.net/ekz4inu.css">
+    <link rel="stylesheet" href="https://use.typekit.net/ekz4inu.css" />
+    <link rel="icon" href="/favicon-light.ico" media="(prefers-color-scheme: light)" />
+    <link rel="icon" href="/favicon-dark.ico" media="(prefers-color-scheme: dark)" />
     <script type="module" src="/scripts/view-transition-events.js"></script>
     <script type="module" src="/scripts/view-transition-a11y.js"></script>
     <script type="module" src="/scripts/scroll-fade.js"></script>
@@ -75,9 +105,8 @@ const { siteOptions } = await client.request<{ siteOptions: { footer: FooterData
     <div id="container" class="min-h-screen flex flex-col">
       <Header />
       <main class="flex-1 pt-12 md:pt-24">
-        <slot />  
+        <slot />
       </main>
-
       <Footer footer={siteOptions.footer} />
     </div>
   </body>

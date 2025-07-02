@@ -39,7 +39,7 @@ font-weight: 800;
 }
 
 .heading-2 {
-    @apply md:text-[48px] md:leading-[52px] tracking-[-0.07em] 
+    @apply md:text-[48px] md:leading-[52px] tracking-[-0.08em] 
     font-semibold font-inter-variable text-foreground 
     pb-4;
   }
@@ -52,12 +52,20 @@ font-weight: 800;
 
 .heading-4, .card-label {
     @apply text-center md:text-left 
-    md:text-[20px] md:leading-[28px] -tracking-[0.18em] 
+    md:text-[20px] md:leading-[28px] -tracking-[0.07rem] 
     font-medium font-inter-variable text-foreground;
   }
 
-p.body {
+p, p.body {
     @apply text-center md:text-left text-[16px] leading-[24px] tracking-normal font-normal font-inter-variable text-foreground pb-4;
+  }
+
+  p a {
+    text-decoration: underline;
+  }
+
+  footer p {
+    @apply text-background text-xs py-0;
   }
 
   .strapline {

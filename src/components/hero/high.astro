@@ -3,7 +3,6 @@ import AnimatedTitle from './AnimatedTitle';
 import AnimatedSubtitle from './AnimatedSubtitle';
 import AnimatedCTAs from './AnimatedCTAs';
 
-
 interface HeroProps {
   heroType?: string[];
   heroTitle: string;
@@ -28,7 +27,7 @@ interface HeroProps {
     url: string;
     title: string;
     target?: string;
-    icon?:string;
+    icon?: string;
   };
   heroSecondaryCtaIcon?: string;
 }
@@ -48,14 +47,11 @@ const {
   heroSecondaryCtaIcon
 } = Astro.props as HeroProps;
 
-const path = Astro.url.pathname;
-
 const unwrap = (val: string[] | undefined, fallback = ''): string =>
   Array.isArray(val) ? val[0] ?? fallback : fallback;
 
 const type = unwrap(heroType, 'high');
 const textTheme = unwrap(heroTextTheme, 'auto');
-
 const bgType = heroBackgroundImage
   ? 'image'
   : heroBackgroundColor
@@ -63,24 +59,25 @@ const bgType = heroBackgroundImage
   : 'gradient';
 
 const layoutClass =
-  type === 'high' ? 'pt-24 pb-36 lg:py-48 lg:pb-8' : type === 'medium' ? 'py-24' : 'py-12';
+  type === 'high' ? 'pt-24 pb-36 lg:py-48 lg:pb-8'
+  : type === 'medium' ? 'py-24'
+  : 'py-12';
 const bgClass = bgType === 'gradient' ? 'gradient-background' : '';
 const textColorClass =
-  textTheme === 'dark'
-    ? 'text-slate-900'
-    : textTheme === 'light'
-    ? 'text-white'
-    : 'text-inherit';
-    const bgStyle = bgType === 'color' && heroBackgroundColor
-  ? `background-color: ${heroBackgroundColor};`
-  : '';
+  textTheme === 'dark' ? 'text-slate-900'
+  : textTheme === 'light' ? 'text-white'
+  : 'text-inherit';
+const bgStyle =
+  bgType === 'color' && heroBackgroundColor
+    ? `background-color: ${heroBackgroundColor};`
+    : '';
 ---
-<section 
-  data-hero-gradient
+
+<section
   class={`hero relative overflow-hidden ${layoutClass} px-6 flex flex-col justify-center ${bgClass} ${textColorClass}`}
   style={bgStyle}
->  
-{heroImage?.node?.sourceUrl && (
+>
+  {heroImage?.node?.sourceUrl && (
     <>
       <div
         class="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat bg-fixed"
@@ -90,36 +87,41 @@ const textColorClass =
     </>
   )}
 
-  <div class={`max-w-3xl w-full mx-auto flex flex-col gap-8`}>
-    <div class="relative inline-block group w-full text-center" id="hero-area">
-      <AnimatedTitle client:load title={heroTitle} pageKey={path} />
+  <div class="max-w-3xl w-full mx-auto flex flex-col gap-8">
+
+    <div
+      id="hero-area"
+      class="relative inline-block w-full text-center overflow-visible"
+    >
+      <AnimatedTitle client:load title={heroTitle} />
     </div>
-<div class="text-center">
-    {heroSubtitle && (
-      <AnimatedSubtitle client:load text={heroSubtitle} pageKey={path} />
-    )}
-</div>
-<div class="text-center">
-<AnimatedCTAs 
-client:load 
-primaryCta={
-  heroPrimaryCta && {
-    label: heroPrimaryCta.title,
-    url: heroPrimaryCta.url,
-    target: heroPrimaryCta.target || '_self',
-    icon: heroPrimaryCtaIcon || null
-  }
-}
-secondaryCta={
-  heroSecondaryCta && {
-    label: heroSecondaryCta.title,
-    url: heroSecondaryCta.url,
-    target: heroSecondaryCta.target || '_self',
-    icon: heroSecondaryCtaIcon || null
-  }
-}
-alignment="center" 
-/>
+
+    <div class="text-center">
+      {heroSubtitle && <AnimatedSubtitle client:load text={heroSubtitle} />}
+    </div>
+
+    <div class="text-center">
+      <AnimatedCTAs
+        client:load
+        primaryCta={
+          heroPrimaryCta && {
+            label: heroPrimaryCta.title,
+            url: heroPrimaryCta.url,
+            target: heroPrimaryCta.target || '_self',
+            icon: heroPrimaryCtaIcon || null
+          }
+        }
+        secondaryCta={
+          heroSecondaryCta && {
+            label: heroSecondaryCta.title,
+            url: heroSecondaryCta.url,
+            target: heroSecondaryCta.target || '_self',
+            icon: heroSecondaryCtaIcon || null
+          }
+        }
+        alignment="center"
+      />
+    </div>
 
   </div>
 </section>

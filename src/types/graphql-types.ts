@@ -14,13 +14,37 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
-/** Connection between the PageBuilderContentContactFormLayout_Fields type and the ContentNode type */
-export type AcfContentNodeConnectionEdge = ContentNodeConnectionEdge & Edge & OneToOneConnection & {
+/** Connection between the PageBuilderContentColumnContent_Fields type and the ContentNode type */
+export type AcfContentNodeConnection = Connection & ContentNodeConnection & {
+  __typename?: 'AcfContentNodeConnection';
+  /** Edges for the AcfContentNodeConnection connection */
+  edges: Array<AcfContentNodeConnectionEdge>;
+  /** The nodes of the connection, without the edges */
+  nodes: Array<ContentNode>;
+  /** Information about pagination in a connection. */
+  pageInfo: AcfContentNodeConnectionPageInfo;
+};
+
+/** An edge in a connection */
+export type AcfContentNodeConnectionEdge = ContentNodeConnectionEdge & Edge & {
   __typename?: 'AcfContentNodeConnectionEdge';
-  /** Opaque reference to the nodes position in the connection. Value can be used with pagination args. */
+  /** A cursor for use in pagination */
   cursor: Maybe<Scalars['String']['output']>;
-  /** The node of the connection, without the edges */
+  /** The item at the end of the edge */
   node: ContentNode;
+};
+
+/** Pagination metadata specific to &quot;AcfContentNodeConnection&quot; collections. Provides cursors and flags for navigating through sets of AcfContentNodeConnection Nodes. */
+export type AcfContentNodeConnectionPageInfo = ContentNodeConnectionPageInfo & PageInfo & WpPageInfo & {
+  __typename?: 'AcfContentNodeConnectionPageInfo';
+  /** When paginating forwards, the cursor to continue. */
+  endCursor: Maybe<Scalars['String']['output']>;
+  /** When paginating forwards, are there more items? */
+  hasNextPage: Scalars['Boolean']['output'];
+  /** When paginating backwards, are there more items? */
+  hasPreviousPage: Scalars['Boolean']['output'];
+  /** When paginating backwards, the cursor to continue. */
+  startCursor: Maybe<Scalars['String']['output']>;
 };
 
 /** A Field Group managed by ACF */
@@ -52,7 +76,7 @@ export type AcfLink = {
   url: Maybe<Scalars['String']['output']>;
 };
 
-/** Connection between the Footer_Fields type and the MediaItem type */
+/** Connection between the ContentCarouselSlidesSlides_Fields type and the MediaItem type */
 export type AcfMediaItemConnectionEdge = Edge & MediaItemConnectionEdge & OneToOneConnection & {
   __typename?: 'AcfMediaItemConnectionEdge';
   /** Opaque reference to the nodes position in the connection. Value can be used with pagination args. */
@@ -1001,6 +1025,64 @@ export type Connection = {
   nodes: Array<Node>;
   /** Information about pagination in a connection. */
   pageInfo: PageInfo;
+};
+
+/** The &quot;ContentCarouselSlides&quot; Field Group. Added to the Schema by &quot;WPGraphQL for ACF&quot;. */
+export type ContentCarouselSlides = AcfFieldGroup & AcfFieldGroupFields & ContentCarouselSlidesFields & {
+  __typename?: 'ContentCarouselSlides';
+  /**
+   * The name of the field group
+   * @deprecated Use __typename instead
+   */
+  fieldGroupName: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;repeater&quot; Field Type added to the schema as part of the &quot;ContentCarouselSlides&quot; Field Group */
+  slides: Maybe<Array<Maybe<ContentCarouselSlidesSlides>>>;
+};
+
+/** The &quot;ContentCarouselSlidesSlides&quot; Field Group. Added to the Schema by &quot;WPGraphQL for ACF&quot;. */
+export type ContentCarouselSlidesSlides = AcfFieldGroup & AcfFieldGroupFields & ContentCarouselSlidesSlidesFields & {
+  __typename?: 'ContentCarouselSlidesSlides';
+  /**
+   * The name of the field group
+   * @deprecated Use __typename instead
+   */
+  fieldGroupName: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;text&quot; Field Type added to the schema as part of the &quot;ContentCarouselSlidesSlides&quot; Field Group */
+  slideButtonLabel: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;url&quot; Field Type added to the schema as part of the &quot;ContentCarouselSlidesSlides&quot; Field Group */
+  slideButtonUrl: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;wysiwyg&quot; Field Type added to the schema as part of the &quot;ContentCarouselSlidesSlides&quot; Field Group */
+  slideContent: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;image&quot; Field Type added to the schema as part of the &quot;ContentCarouselSlidesSlides&quot; Field Group */
+  slideImage: Maybe<AcfMediaItemConnectionEdge>;
+};
+
+/** Interface representing fields of the ACF &quot;ContentCarouselSlidesSlides&quot; Field Group */
+export type ContentCarouselSlidesSlidesFields = {
+  /**
+   * The name of the field group
+   * @deprecated Use __typename instead
+   */
+  fieldGroupName: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;text&quot; Field Type added to the schema as part of the &quot;ContentCarouselSlidesSlides&quot; Field Group */
+  slideButtonLabel: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;url&quot; Field Type added to the schema as part of the &quot;ContentCarouselSlidesSlides&quot; Field Group */
+  slideButtonUrl: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;wysiwyg&quot; Field Type added to the schema as part of the &quot;ContentCarouselSlidesSlides&quot; Field Group */
+  slideContent: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;image&quot; Field Type added to the schema as part of the &quot;ContentCarouselSlidesSlides&quot; Field Group */
+  slideImage: Maybe<AcfMediaItemConnectionEdge>;
+};
+
+/** Interface representing fields of the ACF &quot;ContentCarouselSlides&quot; Field Group */
+export type ContentCarouselSlidesFields = {
+  /**
+   * The name of the field group
+   * @deprecated Use __typename instead
+   */
+  fieldGroupName: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;repeater&quot; Field Type added to the schema as part of the &quot;ContentCarouselSlides&quot; Field Group */
+  slides: Maybe<Array<Maybe<ContentCarouselSlidesSlides>>>;
 };
 
 /** Base interface for content objects like posts, pages, and media items. Provides common fields available across these content types. */
@@ -2641,6 +2723,17 @@ export type GeneralSettings = {
   url: Maybe<Scalars['String']['output']>;
 };
 
+export type GlobalSeoSettings = AcfOptionsPage & Node & WithAcfSeoSettings & {
+  __typename?: 'GlobalSeoSettings';
+  /** The globally unique ID for the object */
+  id: Scalars['ID']['output'];
+  menuTitle: Maybe<Scalars['String']['output']>;
+  pageTitle: Maybe<Scalars['String']['output']>;
+  parentId: Maybe<Scalars['String']['output']>;
+  /** Fields of the SeoSettings ACF Field Group */
+  seoSettings: Maybe<SeoSettings>;
+};
+
 /** The &quot;HeaderMenu&quot; Field Group. Added to the Schema by &quot;WPGraphQL for ACF&quot;. */
 export type HeaderMenu = AcfFieldGroup & AcfFieldGroupFields & HeaderMenuFields & {
   __typename?: 'HeaderMenu';
@@ -4227,7 +4320,7 @@ export enum OrderEnum {
 }
 
 /** A standalone content entry generally used for static, non-chronological content such as &quot;About Us&quot; or &quot;Contact&quot; pages. */
-export type Page = ContentNode & DatabaseIdentifier & HierarchicalContentNode & HierarchicalNode & MenuItemLinkable & Node & NodeWithAuthor & NodeWithComments & NodeWithContentEditor & NodeWithFeaturedImage & NodeWithPageAttributes & NodeWithRevisions & NodeWithTemplate & NodeWithTitle & Previewable & UniformResourceIdentifiable & WithAcfPageBuilder & {
+export type Page = ContentNode & DatabaseIdentifier & HierarchicalContentNode & HierarchicalNode & MenuItemLinkable & Node & NodeWithAuthor & NodeWithComments & NodeWithContentEditor & NodeWithFeaturedImage & NodeWithPageAttributes & NodeWithRevisions & NodeWithTemplate & NodeWithTitle & Previewable & UniformResourceIdentifiable & WithAcfPageBuilder & WithAcfSeoSettings & {
   __typename?: 'Page';
   /** Returns ancestors of the node. Default ordered as lowest (closest to the child) to highest (closest to the root). */
   ancestors: Maybe<HierarchicalContentNodeToContentNodeAncestorsConnection>;
@@ -4332,6 +4425,8 @@ export type Page = ContentNode & DatabaseIdentifier & HierarchicalContentNode & 
   revisionOf: Maybe<NodeWithRevisionsToContentNodeConnectionEdge>;
   /** Connection between the Page type and the page type */
   revisions: Maybe<PageToRevisionConnection>;
+  /** Fields of the SeoSettings ACF Field Group */
+  seoSettings: Maybe<SeoSettings>;
   /** The uri slug for the post. This is equivalent to the WP_Post-&gt;post_name field and the post_name column in the database for the &quot;post_objects&quot; table. */
   slug: Maybe<Scalars['String']['output']>;
   /** The current status of the object */
@@ -4419,6 +4514,56 @@ export type PageBuilder = AcfFieldGroup & AcfFieldGroupFields & PageBuilderField
   __typename?: 'PageBuilder';
   /** Field of the &quot;flexible_content&quot; Field Type added to the schema as part of the &quot;PageBuilder&quot; Field Group */
   content: Maybe<Array<Maybe<PageBuilderContentLayout>>>;
+  /**
+   * The name of the field group
+   * @deprecated Use __typename instead
+   */
+  fieldGroupName: Maybe<Scalars['String']['output']>;
+};
+
+/** The &quot;PageBuilderContentAccordion&quot; Field Group. Added to the Schema by &quot;WPGraphQL for ACF&quot;. */
+export type PageBuilderContentAccordion = AcfFieldGroup & AcfFieldGroupFields & PageBuilderContentAccordionFields & {
+  __typename?: 'PageBuilderContentAccordion';
+  /** Field of the &quot;wysiwyg&quot; Field Type added to the schema as part of the &quot;PageBuilderContentAccordion&quot; Field Group */
+  accordionContent: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;text&quot; Field Type added to the schema as part of the &quot;PageBuilderContentAccordion&quot; Field Group */
+  accordionHeadline: Maybe<Scalars['String']['output']>;
+  /**
+   * The name of the field group
+   * @deprecated Use __typename instead
+   */
+  fieldGroupName: Maybe<Scalars['String']['output']>;
+};
+
+/** The &quot;PageBuilderContentAccordionLayout&quot; Field Group. Added to the Schema by &quot;WPGraphQL for ACF&quot;. */
+export type PageBuilderContentAccordionLayout = AcfFieldGroup & AcfFieldGroupFields & PageBuilderContentAccordionLayoutFields & PageBuilderContentLayout & {
+  __typename?: 'PageBuilderContentAccordionLayout';
+  /** Field of the &quot;repeater&quot; Field Type added to the schema as part of the &quot;PageBuilderContentAccordionLayout&quot; Field Group */
+  accordion: Maybe<Array<Maybe<PageBuilderContentAccordion>>>;
+  /**
+   * The name of the field group
+   * @deprecated Use __typename instead
+   */
+  fieldGroupName: Maybe<Scalars['String']['output']>;
+};
+
+/** Interface representing fields of the ACF &quot;PageBuilderContentAccordionLayout&quot; Field Group */
+export type PageBuilderContentAccordionLayoutFields = {
+  /** Field of the &quot;repeater&quot; Field Type added to the schema as part of the &quot;PageBuilderContentAccordionLayout&quot; Field Group */
+  accordion: Maybe<Array<Maybe<PageBuilderContentAccordion>>>;
+  /**
+   * The name of the field group
+   * @deprecated Use __typename instead
+   */
+  fieldGroupName: Maybe<Scalars['String']['output']>;
+};
+
+/** Interface representing fields of the ACF &quot;PageBuilderContentAccordion&quot; Field Group */
+export type PageBuilderContentAccordionFields = {
+  /** Field of the &quot;wysiwyg&quot; Field Type added to the schema as part of the &quot;PageBuilderContentAccordion&quot; Field Group */
+  accordionContent: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;text&quot; Field Type added to the schema as part of the &quot;PageBuilderContentAccordion&quot; Field Group */
+  accordionHeadline: Maybe<Scalars['String']['output']>;
   /**
    * The name of the field group
    * @deprecated Use __typename instead
@@ -4534,6 +4679,139 @@ export type PageBuilderContentCardDeckLayoutFields = {
   fieldGroupName: Maybe<Scalars['String']['output']>;
 };
 
+/** The &quot;PageBuilderContentCarouselBreakpoints&quot; Field Group. Added to the Schema by &quot;WPGraphQL for ACF&quot;. */
+export type PageBuilderContentCarouselBreakpoints = AcfFieldGroup & AcfFieldGroupFields & PageBuilderContentCarouselBreakpointsFields & {
+  __typename?: 'PageBuilderContentCarouselBreakpoints';
+  /** Field of the &quot;number&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselBreakpoints&quot; Field Group */
+  carouselBreakpointsDesktop: Maybe<Scalars['Float']['output']>;
+  /** Field of the &quot;number&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselBreakpoints&quot; Field Group */
+  carouselBreakpointsMobile: Maybe<Scalars['Float']['output']>;
+  /** Field of the &quot;number&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselBreakpoints&quot; Field Group */
+  carouselBreakpointsTablet: Maybe<Scalars['Float']['output']>;
+  /**
+   * The name of the field group
+   * @deprecated Use __typename instead
+   */
+  fieldGroupName: Maybe<Scalars['String']['output']>;
+};
+
+/** Interface representing fields of the ACF &quot;PageBuilderContentCarouselBreakpoints&quot; Field Group */
+export type PageBuilderContentCarouselBreakpointsFields = {
+  /** Field of the &quot;number&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselBreakpoints&quot; Field Group */
+  carouselBreakpointsDesktop: Maybe<Scalars['Float']['output']>;
+  /** Field of the &quot;number&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselBreakpoints&quot; Field Group */
+  carouselBreakpointsMobile: Maybe<Scalars['Float']['output']>;
+  /** Field of the &quot;number&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselBreakpoints&quot; Field Group */
+  carouselBreakpointsTablet: Maybe<Scalars['Float']['output']>;
+  /**
+   * The name of the field group
+   * @deprecated Use __typename instead
+   */
+  fieldGroupName: Maybe<Scalars['String']['output']>;
+};
+
+/** The &quot;PageBuilderContentCarouselContents&quot; Field Group. Added to the Schema by &quot;WPGraphQL for ACF&quot;. */
+export type PageBuilderContentCarouselContents = AcfFieldGroup & AcfFieldGroupFields & PageBuilderContentCarouselContentsFields & {
+  __typename?: 'PageBuilderContentCarouselContents';
+  /** Field of the &quot;text&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselContents&quot; Field Group */
+  carouselContentsCaption: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;image&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselContents&quot; Field Group */
+  carouselContentsImage: Maybe<AcfMediaItemConnectionEdge>;
+  /** Field of the &quot;link&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselContents&quot; Field Group */
+  carouselContentsLink: Maybe<AcfLink>;
+  /**
+   * The name of the field group
+   * @deprecated Use __typename instead
+   */
+  fieldGroupName: Maybe<Scalars['String']['output']>;
+};
+
+/** Interface representing fields of the ACF &quot;PageBuilderContentCarouselContents&quot; Field Group */
+export type PageBuilderContentCarouselContentsFields = {
+  /** Field of the &quot;text&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselContents&quot; Field Group */
+  carouselContentsCaption: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;image&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselContents&quot; Field Group */
+  carouselContentsImage: Maybe<AcfMediaItemConnectionEdge>;
+  /** Field of the &quot;link&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselContents&quot; Field Group */
+  carouselContentsLink: Maybe<AcfLink>;
+  /**
+   * The name of the field group
+   * @deprecated Use __typename instead
+   */
+  fieldGroupName: Maybe<Scalars['String']['output']>;
+};
+
+/** The &quot;PageBuilderContentCarouselLayout&quot; Field Group. Added to the Schema by &quot;WPGraphQL for ACF&quot;. */
+export type PageBuilderContentCarouselLayout = AcfFieldGroup & AcfFieldGroupFields & PageBuilderContentCarouselLayoutFields & PageBuilderContentLayout & {
+  __typename?: 'PageBuilderContentCarouselLayout';
+  /** Field of the &quot;select&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselAutoplayBehaviour: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  /** Field of the &quot;group&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselBreakpoints: Maybe<PageBuilderContentCarouselBreakpoints>;
+  /** Field of the &quot;repeater&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselContents: Maybe<Array<Maybe<PageBuilderContentCarouselContents>>>;
+  /** Field of the &quot;select&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselEffect: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  /** The length of time it pauses between slides. Select 0 for non-stop. */
+  carouselInterval: Maybe<Scalars['Float']['output']>;
+  /** Field of the &quot;true_false&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselLazyLoad: Maybe<Scalars['Boolean']['output']>;
+  /** Field of the &quot;true_false&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselLoop: Maybe<Scalars['Boolean']['output']>;
+  /** Field of the &quot;true_false&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselPaginationDots: Maybe<Scalars['Boolean']['output']>;
+  /** Field of the &quot;true_false&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselPauseOnHover: Maybe<Scalars['Boolean']['output']>;
+  /** Field of the &quot;true_false&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselShowNavigationArrows: Maybe<Scalars['Boolean']['output']>;
+  /** Field of the &quot;number&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselSlidesPerView: Maybe<Scalars['Float']['output']>;
+  /** Field of the &quot;number&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselSlidesToScroll: Maybe<Scalars['Float']['output']>;
+  /** Field of the &quot;range&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselSpeed: Maybe<Scalars['Float']['output']>;
+  /**
+   * The name of the field group
+   * @deprecated Use __typename instead
+   */
+  fieldGroupName: Maybe<Scalars['String']['output']>;
+};
+
+/** Interface representing fields of the ACF &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+export type PageBuilderContentCarouselLayoutFields = {
+  /** Field of the &quot;select&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselAutoplayBehaviour: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  /** Field of the &quot;group&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselBreakpoints: Maybe<PageBuilderContentCarouselBreakpoints>;
+  /** Field of the &quot;repeater&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselContents: Maybe<Array<Maybe<PageBuilderContentCarouselContents>>>;
+  /** Field of the &quot;select&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselEffect: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  /** The length of time it pauses between slides. Select 0 for non-stop. */
+  carouselInterval: Maybe<Scalars['Float']['output']>;
+  /** Field of the &quot;true_false&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselLazyLoad: Maybe<Scalars['Boolean']['output']>;
+  /** Field of the &quot;true_false&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselLoop: Maybe<Scalars['Boolean']['output']>;
+  /** Field of the &quot;true_false&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselPaginationDots: Maybe<Scalars['Boolean']['output']>;
+  /** Field of the &quot;true_false&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselPauseOnHover: Maybe<Scalars['Boolean']['output']>;
+  /** Field of the &quot;true_false&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselShowNavigationArrows: Maybe<Scalars['Boolean']['output']>;
+  /** Field of the &quot;number&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselSlidesPerView: Maybe<Scalars['Float']['output']>;
+  /** Field of the &quot;number&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselSlidesToScroll: Maybe<Scalars['Float']['output']>;
+  /** Field of the &quot;range&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselSpeed: Maybe<Scalars['Float']['output']>;
+  /**
+   * The name of the field group
+   * @deprecated Use __typename instead
+   */
+  fieldGroupName: Maybe<Scalars['String']['output']>;
+};
+
 /** The &quot;PageBuilderContentColumnContent&quot; Field Group. Added to the Schema by &quot;WPGraphQL for ACF&quot;. */
 export type PageBuilderContentColumnContent = AcfFieldGroup & AcfFieldGroupFields & PageBuilderContentColumnContentFields & {
   __typename?: 'PageBuilderContentColumnContent';
@@ -4541,6 +4819,8 @@ export type PageBuilderContentColumnContent = AcfFieldGroup & AcfFieldGroupField
   columnButton: Maybe<PageBuilderContentColumnContentColumnButton>;
   /** Field of the &quot;wysiwyg&quot; Field Type added to the schema as part of the &quot;PageBuilderContentColumnContent&quot; Field Group */
   columnContent: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;post_object&quot; Field Type added to the schema as part of the &quot;PageBuilderContentColumnContent&quot; Field Group */
+  columnLinkedForm: Maybe<AcfContentNodeConnection>;
   /** Field of the &quot;select&quot; Field Type added to the schema as part of the &quot;PageBuilderContentColumnContent&quot; Field Group */
   columnWidth: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /**
@@ -4548,6 +4828,17 @@ export type PageBuilderContentColumnContent = AcfFieldGroup & AcfFieldGroupField
    * @deprecated Use __typename instead
    */
   fieldGroupName: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;true_false&quot; Field Type added to the schema as part of the &quot;PageBuilderContentColumnContent&quot; Field Group */
+  showForm: Maybe<Scalars['Boolean']['output']>;
+};
+
+
+/** The &quot;PageBuilderContentColumnContent&quot; Field Group. Added to the Schema by &quot;WPGraphQL for ACF&quot;. */
+export type PageBuilderContentColumnContentColumnLinkedFormArgs = {
+  after: InputMaybe<Scalars['String']['input']>;
+  before: InputMaybe<Scalars['String']['input']>;
+  first: InputMaybe<Scalars['Int']['input']>;
+  last: InputMaybe<Scalars['Int']['input']>;
 };
 
 /** The &quot;PageBuilderContentColumnContentColumnButton&quot; Field Group. Added to the Schema by &quot;WPGraphQL for ACF&quot;. */
@@ -4591,6 +4882,8 @@ export type PageBuilderContentColumnContentFields = {
   columnButton: Maybe<PageBuilderContentColumnContentColumnButton>;
   /** Field of the &quot;wysiwyg&quot; Field Type added to the schema as part of the &quot;PageBuilderContentColumnContent&quot; Field Group */
   columnContent: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;post_object&quot; Field Type added to the schema as part of the &quot;PageBuilderContentColumnContent&quot; Field Group */
+  columnLinkedForm: Maybe<AcfContentNodeConnection>;
   /** Field of the &quot;select&quot; Field Type added to the schema as part of the &quot;PageBuilderContentColumnContent&quot; Field Group */
   columnWidth: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /**
@@ -4598,6 +4891,17 @@ export type PageBuilderContentColumnContentFields = {
    * @deprecated Use __typename instead
    */
   fieldGroupName: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;true_false&quot; Field Type added to the schema as part of the &quot;PageBuilderContentColumnContent&quot; Field Group */
+  showForm: Maybe<Scalars['Boolean']['output']>;
+};
+
+
+/** Interface representing fields of the ACF &quot;PageBuilderContentColumnContent&quot; Field Group */
+export type PageBuilderContentColumnContentFieldsColumnLinkedFormArgs = {
+  after: InputMaybe<Scalars['String']['input']>;
+  before: InputMaybe<Scalars['String']['input']>;
+  first: InputMaybe<Scalars['Int']['input']>;
+  last: InputMaybe<Scalars['Int']['input']>;
 };
 
 /** The &quot;PageBuilderContentContactFormLayout&quot; Field Group. Added to the Schema by &quot;WPGraphQL for ACF&quot;. */
@@ -4608,6 +4912,8 @@ export type PageBuilderContentContactFormLayout = AcfFieldGroup & AcfFieldGroupF
    * @deprecated Use __typename instead
    */
   fieldGroupName: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;select&quot; Field Type added to the schema as part of the &quot;PageBuilderContentContactFormLayout&quot; Field Group */
+  formContainerWidth: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** Field of the &quot;wysiwyg&quot; Field Type added to the schema as part of the &quot;PageBuilderContentContactFormLayout&quot; Field Group */
   formIntro: Maybe<Scalars['String']['output']>;
   /** Field of the &quot;post_object&quot; Field Type added to the schema as part of the &quot;PageBuilderContentContactFormLayout&quot; Field Group */
@@ -4621,6 +4927,8 @@ export type PageBuilderContentContactFormLayoutFields = {
    * @deprecated Use __typename instead
    */
   fieldGroupName: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;select&quot; Field Type added to the schema as part of the &quot;PageBuilderContentContactFormLayout&quot; Field Group */
+  formContainerWidth: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** Field of the &quot;wysiwyg&quot; Field Type added to the schema as part of the &quot;PageBuilderContentContactFormLayout&quot; Field Group */
   formIntro: Maybe<Scalars['String']['output']>;
   /** Field of the &quot;post_object&quot; Field Type added to the schema as part of the &quot;PageBuilderContentContactFormLayout&quot; Field Group */
@@ -5187,7 +5495,7 @@ export enum PluginStatusEnum {
 }
 
 /** A chronological content entry typically used for blog posts, news articles, or similar date-based content. */
-export type Post = ContentNode & DatabaseIdentifier & MenuItemLinkable & Node & NodeWithAuthor & NodeWithComments & NodeWithContentEditor & NodeWithExcerpt & NodeWithFeaturedImage & NodeWithRevisions & NodeWithTemplate & NodeWithTitle & NodeWithTrackbacks & Previewable & UniformResourceIdentifiable & WithAcfPageBuilder & {
+export type Post = ContentNode & DatabaseIdentifier & MenuItemLinkable & Node & NodeWithAuthor & NodeWithComments & NodeWithContentEditor & NodeWithExcerpt & NodeWithFeaturedImage & NodeWithRevisions & NodeWithTemplate & NodeWithTitle & NodeWithTrackbacks & Previewable & UniformResourceIdentifiable & WithAcfPageBuilder & WithAcfSeoSettings & {
   __typename?: 'Post';
   /**
    * The ancestors of the content node.
@@ -5300,6 +5608,8 @@ export type Post = ContentNode & DatabaseIdentifier & MenuItemLinkable & Node & 
   revisionOf: Maybe<NodeWithRevisionsToContentNodeConnectionEdge>;
   /** Connection between the Post type and the post type */
   revisions: Maybe<PostToRevisionConnection>;
+  /** Fields of the SeoSettings ACF Field Group */
+  seoSettings: Maybe<SeoSettings>;
   /** The uri slug for the post. This is equivalent to the WP_Post-&gt;post_name field and the post_name column in the database for the &quot;post_objects&quot; table. */
   slug: Maybe<Scalars['String']['output']>;
   /** The current status of the object */
@@ -6927,7 +7237,7 @@ export type RootMutationUpdateUserArgs = {
 };
 
 /** The root entry point into the Graph */
-export type RootQuery = WithAcfOptionsPageSiteOptions & {
+export type RootQuery = WithAcfOptionsPageGlobalSeoSettings & WithAcfOptionsPageSiteOptions & {
   __typename?: 'RootQuery';
   /** Entry point to get all settings for the site */
   allSettings: Maybe<Settings>;
@@ -6960,6 +7270,7 @@ export type RootQuery = WithAcfOptionsPageSiteOptions & {
   discussionSettings: Maybe<DiscussionSettings>;
   /** Fields of the &#039;GeneralSettings&#039; settings group */
   generalSettings: Maybe<GeneralSettings>;
+  globalSeoSettings: Maybe<GlobalSeoSettings>;
   /** An object of the mediaItem Type.  */
   mediaItem: Maybe<MediaItem>;
   /**
@@ -8738,6 +9049,45 @@ export type SendPasswordResetEmailPayload = {
    * @deprecated This field will be removed in a future version of WPGraphQL
    */
   user: Maybe<User>;
+};
+
+/** The &quot;SeoSettings&quot; Field Group. Added to the Schema by &quot;WPGraphQL for ACF&quot;. */
+export type SeoSettings = AcfFieldGroup & AcfFieldGroupFields & SeoSettingsFields & {
+  __typename?: 'SeoSettings';
+  /**
+   * The name of the field group
+   * @deprecated Use __typename instead
+   */
+  fieldGroupName: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;text&quot; Field Type added to the schema as part of the &quot;SeoSettings&quot; Field Group */
+  seoCanonical: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;textarea&quot; Field Type added to the schema as part of the &quot;SeoSettings&quot; Field Group */
+  seoDescription: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;image&quot; Field Type added to the schema as part of the &quot;SeoSettings&quot; Field Group */
+  seoImage: Maybe<AcfMediaItemConnectionEdge>;
+  /** Check this box if you wish to discourage search engines from indexing this page. */
+  seoIndex: Maybe<Scalars['Boolean']['output']>;
+  /** Field of the &quot;text&quot; Field Type added to the schema as part of the &quot;SeoSettings&quot; Field Group */
+  seoTitle: Maybe<Scalars['String']['output']>;
+};
+
+/** Interface representing fields of the ACF &quot;SeoSettings&quot; Field Group */
+export type SeoSettingsFields = {
+  /**
+   * The name of the field group
+   * @deprecated Use __typename instead
+   */
+  fieldGroupName: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;text&quot; Field Type added to the schema as part of the &quot;SeoSettings&quot; Field Group */
+  seoCanonical: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;textarea&quot; Field Type added to the schema as part of the &quot;SeoSettings&quot; Field Group */
+  seoDescription: Maybe<Scalars['String']['output']>;
+  /** Field of the &quot;image&quot; Field Type added to the schema as part of the &quot;SeoSettings&quot; Field Group */
+  seoImage: Maybe<AcfMediaItemConnectionEdge>;
+  /** Check this box if you wish to discourage search engines from indexing this page. */
+  seoIndex: Maybe<Scalars['Boolean']['output']>;
+  /** Field of the &quot;text&quot; Field Type added to the schema as part of the &quot;SeoSettings&quot; Field Group */
+  seoTitle: Maybe<Scalars['String']['output']>;
 };
 
 /** All of the registered settings */
@@ -10807,6 +11157,11 @@ export type WithAcfHeaderMenu = {
   headerMenu: Maybe<HeaderMenu>;
 };
 
+/** Access point for the &quot;GlobalSeoSettings&quot; ACF Options Page */
+export type WithAcfOptionsPageGlobalSeoSettings = {
+  globalSeoSettings: Maybe<GlobalSeoSettings>;
+};
+
 /** Access point for the &quot;SiteOptions&quot; ACF Options Page */
 export type WithAcfOptionsPageSiteOptions = {
   siteOptions: Maybe<SiteOptions>;
@@ -10816,6 +11171,12 @@ export type WithAcfOptionsPageSiteOptions = {
 export type WithAcfPageBuilder = {
   /** Fields of the PageBuilder ACF Field Group */
   pageBuilder: Maybe<PageBuilder>;
+};
+
+/** Provides access to fields of the &quot;SeoSettings&quot; ACF Field Group via the &quot;seoSettings&quot; field */
+export type WithAcfSeoSettings = {
+  /** Fields of the SeoSettings ACF Field Group */
+  seoSettings: Maybe<SeoSettings>;
 };
 
 /** The writing setting type */

@@ -3,11 +3,14 @@ import type { ParsedStackItem } from '@/types/imagestack';
 import Hero from '@/components/hero/index.astro';
 import ImageStack from '@/components/imagestack/index.tsx';
 import { TextColumns } from '@/components/textcolumns';
+import type { TextColumn } from '@/components/textcolumns';
 import FeatureColumns from '@/components/featurecolumns';
 import CalloutBlock from '@/components/calloutblock';
 import CardDeck from '@/components/carddeck';
 import FormBlock from '@/components/forms';
-import Headline from './headline';
+import Headline from '@/components/headline/index.astro';
+import Accordion from '@/components/accordion';
+import Carousel from '@/components/carousel';
 import { Buffer } from 'buffer';
 
 import type {
@@ -19,7 +22,9 @@ import type {
   ContentFieldsPageBuilderContentCalloutBlockLayoutFragment,
   ContentFieldsPageBuilderContentCardDeckLayoutFragment,
   ContentFieldsPageBuilderContentHeadlineLayoutFragment,
+  ContentFieldsPageBuilderContentAccordionLayoutFragment,
   ContentFieldsPageBuilderContentContactFormLayoutFragment,
+  ContentFieldsPageBuilderContentCarouselLayoutFragment,
 } from '@/queries/GetPage.generated';
 
 function decodeGraphqlId(id: string): number | null {
@@ -49,7 +54,7 @@ const { contentBlocks } = Astro.props as {
 
 function isPageBuilderBlock(block: unknown): block is PageBuilderBlock {
   if (!block || typeof block !== 'object') return false;
-  const typedBlock = block as { __typename?: unknown };
+  const typed = block as { __typename?: string };
   return [
     'PageBuilderContentHeroLayout',
     'PageBuilderContentImageStackLayout',
@@ -58,8 +63,10 @@ function isPageBuilderBlock(block: unknown): block is PageBuilderBlock {
     'PageBuilderContentCalloutBlockLayout',
     'PageBuilderContentCardDeckLayout',
     'PageBuilderContentHeadlineLayout',
+    'PageBuilderContentAccordionLayout',
     'PageBuilderContentContactFormLayout',
-  ].includes(typedBlock.__typename as string);
+    'PageBuilderContentCarouselLayout',
+  ].includes(typed.__typename!);
 }
 
 function parseStackItem(
@@ -77,7 +84,7 @@ function parseStackItem(
 const blocks: PageBuilderBlock[] = contentBlocks.filter(isPageBuilderBlock);
 ---
 
-{blocks.map((block, index) => {
+{blocks.map((block, i) => {
   try {
     switch (block.__typename) {
       case 'PageBuilderContentHeroLayout':
@@ -85,68 +92,152 @@ const blocks: PageBuilderBlock[] = contentBlocks.filter(isPageBuilderBlock);
 
       case 'PageBuilderContentImageStackLayout': {
         const items = block.imageStack?.filter(Boolean).map(parseStackItem) ?? [];
-        return <section class="py-24"><ImageStack items={items} client:load /></section>;
+        return (
+          <section class="py-24">
+            <ImageStack items={items} client:load />
+          </section>
+        );
       }
 
       case 'PageBuilderContentHeadlineLayout': {
-        const headlineBlock = block as ContentFieldsPageBuilderContentHeadlineLayoutFragment;
+        const hb = block as ContentFieldsPageBuilderContentHeadlineLayoutFragment;
         return (
           <Headline
-            headlineText={safe(headlineBlock.headlineText, '')}
-            headlineSize={[first(headlineBlock.headlineSize, 'large')]}
-            containerWidth={first(headlineBlock.containerWidth, 'w-full')}
+            headlineText={safe(hb.headlineText, '')}
+            headlineSize={[first(hb.headlineSize, 'large')]}
+            containerWidth={first(hb.containerWidth, 'w-full')}
+          />
+        );
+      }
+
+      case 'PageBuilderContentCarouselLayout': {
+        const cb = block as ContentFieldsPageBuilderContentCarouselLayoutFragment;
+        return <Carousel data={cb} client:load />;
+      }
+
+      case 'PageBuilderContentAccordionLayout': {
+        const ab = block as ContentFieldsPageBuilderContentAccordionLayoutFragment;
+        return (
+          <Accordion
+            items={
+              (ab.accordion ?? [])
+                .filter((it): it is NonNullable<typeof it> => Boolean(it?.accordionHeadline && it.accordionContent))
+                .map(it => ({
+                  accordionHeadline: it.accordionHeadline!,
+                  accordionContent: it.accordionContent!,
+                }))
+            }
+            client:load
           />
         );
       }
 
       case 'PageBuilderContentTextLayout': {
-        const textBlock = block as ContentFieldsPageBuilderContentTextLayoutFragment;
+        const tb = block as ContentFieldsPageBuilderContentTextLayoutFragment;
+        console.log('Text block data:', JSON.stringify(tb, null, 2));
+
         return (
           <TextColumns
-            columnContent={(textBlock.columnContent ?? []).map((item) => {
-              const button = item?.columnButton ? {
-                buttonLink: {
-                  title: item.columnButton.buttonLink?.title ?? '',
-                  url: item.columnButton.buttonLink?.url ?? '',
-                  target: item.columnButton.buttonLink?.target ?? '_self'
-                },
-                buttonIcon: first(item.columnButton.buttonIcon, ''),
-                buttonStyle: first(item.columnButton.buttonStyle, 'default') as 'primary' | 'secondary' | 'default'
-              } : undefined;
-
-              return {
-                columnWidth: first(item?.columnWidth, 'col-span-6'),
-                columnContent: safe(item?.columnContent, ''),
-                ...(button ? { columnButton: button } : {})
+            columnContent={(tb.columnContent ?? []).map(item => {
+              // base shape
+              const columnData: TextColumn = {
+                columnWidth: Array.isArray(item?.columnWidth) 
+                  ? item.columnWidth.filter((w): w is string => typeof w === 'string')
+                  : ['col-span-12'],
+                columnContent: item?.columnContent ?? '',
               };
+
+              // optional button
+              if (item?.columnButton) {
+                columnData.columnButton = {
+                  buttonLink: {
+                    title: item.columnButton.buttonLink?.title ?? '',
+                    url: item.columnButton.buttonLink?.url ?? '',
+                    target: item.columnButton.buttonLink?.target ?? '_self',
+                  },
+                  buttonIcon: first(item.columnButton.buttonIcon, ''),
+                  buttonStyle: first(item.columnButton.buttonStyle, 'default') as
+                    | 'primary'
+                    | 'secondary'
+                    | 'default',
+                };
+              }
+
+// Update the form node mapping to ensure title is never null
+if (item?.columnLinkedForm?.nodes) {
+  const formNodes = item.columnLinkedForm.nodes
+    .filter((n): n is Extract<typeof n, { __typename: 'CustomForm' }> => 
+      n?.__typename === 'CustomForm' && 
+      !!n.id && 
+      n.title !== undefined &&  // Changed from !!n.title to check for undefined
+      !!n.formFields?.formFields
+    )
+    .map(n => {
+      const formFields = (n.formFields?.formFields ?? [])
+        .filter((f): f is NonNullable<typeof f> => 
+          Boolean(f?.formFieldName && f.formFieldLabel)
+        )
+        .map(f => ({
+          formFieldName: f.formFieldName!,
+          formFieldLabel: f.formFieldLabel!,
+          formFieldType: Array.isArray(f.formFieldType)
+            ? f.formFieldType[0] ?? 'text'
+            : f.formFieldType ?? 'text',
+          formFieldsRequired: f.formFieldsRequired ?? false,
+          formFieldsPlaceholder: f.formFieldsPlaceholder ?? undefined, // Make optional if empty
+          formFieldsOptions: Array.isArray(f.formFieldsOptions)
+            ? f.formFieldsOptions.filter((opt): opt is string => typeof opt === 'string')
+            : f.formFieldsOptions
+              ? [f.formFieldsOptions].filter((s): s is string => typeof s === 'string')
+              : undefined, // Make optional if empty
+          formFieldsDefault: f.formFieldsDefault ?? undefined // Make optional if empty
+        }));
+
+      return {
+        __typename: n.__typename,
+        id: n.id,
+        title: n.title ?? '', // Ensure title is never null
+        formFields: {
+          formFields: formFields
+        }
+      };
+    });
+
+  if (formNodes.length) {
+    columnData.columnLinkedForm = { nodes: formNodes };
+  }
+}
+
+              return columnData;
             })}
-            containerWidth={first(textBlock.containerWidth, 'container-lg')}
+            containerWidth={first(tb.containerWidth, 'container-lg')}
           />
         );
       }
 
       case 'PageBuilderContentFeatureColumnsLayout': {
-        const featureBlock = block as ContentFieldsPageBuilderContentFeatureColumnsLayoutFragment;
+        const fb = block as ContentFieldsPageBuilderContentFeatureColumnsLayoutFragment;
         return (
           <FeatureColumns
-            featureColumnsColumns={(featureBlock.featureColumnsColumns ?? []).map(column => {
-              if (!column) return null;
-              
+            featureColumnsColumns={(fb.featureColumnsColumns ?? []).map(col => {
+              if (!col) return null;
               return {
-                columnText: column.columnText ?? '',
-                columnImages: (column.columnImages ?? [])
+                columnText: col.columnText ?? '',
+                columnImages: (col.columnImages ?? [])
                   .filter((img): img is NonNullable<typeof img> => Boolean(img?.columnImagesStack?.node?.sourceUrl))
                   .map(img => ({
                     sourceUrl: img.columnImagesStack!.node!.sourceUrl!,
-                    ...(img.columnImagesStack!.node!.altText ? { altText: img.columnImagesStack?.node.altText } : {})
+                    ...(img.columnImagesStack!.node!.altText && { altText: img.columnImagesStack!.node!.altText! }),
                   })),
-                ...(column.featureLink?.title && column.featureLink.url ? {
-                  featureLink: {
-                    title: column.featureLink.title,
-                    url: column.featureLink.url,
-                    ...(column.featureLink.target ? { target: column.featureLink.target } : {})
-                  }
-                } : {})
+                ...(col.featureLink?.title && col.featureLink.url
+                  ? {
+                      featureLink: {
+                        title: col.featureLink.title,
+                        url: col.featureLink.url,
+                        ...(col.featureLink.target && { target: col.featureLink.target }),
+                      },
+                    }
+                  : {}),
               };
             })}
             containerWidth="container-lg"
@@ -155,30 +246,30 @@ const blocks: PageBuilderBlock[] = contentBlocks.filter(isPageBuilderBlock);
       }
 
       case 'PageBuilderContentCalloutBlockLayout': {
-        const calloutBlock = block as ContentFieldsPageBuilderContentCalloutBlockLayoutFragment;
+        const cb = block as ContentFieldsPageBuilderContentCalloutBlockLayoutFragment;
         return (
           <CalloutBlock
-            calloutItem={(calloutBlock.calloutItem ?? [])
-              .filter((item): item is NonNullable<typeof item> => Boolean(item))
-              .map(item => ({
-                calloutIcon: first(item.calloutIcon, ''),
-                calloutHeadline: item.calloutHeadline ?? '',
-                calloutDescription: item.calloutDescription ?? ''
+            calloutItem={(cb.calloutItem ?? [])
+              .filter((it): it is NonNullable<typeof it> => Boolean(it))
+              .map(it => ({
+                calloutIcon: first(it.calloutIcon, ''),
+                calloutHeadline: it.calloutHeadline ?? '',
+                calloutDescription: it.calloutDescription ?? '',
               }))}
           />
         );
       }
 
       case 'PageBuilderContentCardDeckLayout': {
-        const cardBlock = block as ContentFieldsPageBuilderContentCardDeckLayoutFragment;
+        const cd = block as ContentFieldsPageBuilderContentCardDeckLayoutFragment;
         return (
           <CardDeck
-            cardDeckItem={(cardBlock.cardDeckItem ?? [])
-              .filter((card): card is NonNullable<typeof card> => Boolean(card))
-              .map(card => ({
-                cardDeckIcon: first(card.cardDeckIcon, ''),
-                cardDeckHeadline: card.cardDeckHeadline ?? '',
-                cardDeckDescription: card.cardDeckDescription ?? ''
+            cardDeckItem={(cd.cardDeckItem ?? [])
+              .filter((c): c is NonNullable<typeof c> => Boolean(c))
+              .map(c => ({
+                cardDeckIcon: first(c.cardDeckIcon, ''),
+                cardDeckHeadline: c.cardDeckHeadline ?? '',
+                cardDeckDescription: c.cardDeckDescription ?? '',
               }))}
             client:load
           />
@@ -186,45 +277,49 @@ const blocks: PageBuilderBlock[] = contentBlocks.filter(isPageBuilderBlock);
       }
 
       case 'PageBuilderContentContactFormLayout': {
-        const contactFormBlock = block as ContentFieldsPageBuilderContentContactFormLayoutFragment;
-        const formNode = contactFormBlock.linkedForm?.node;
+        const cf = block as ContentFieldsPageBuilderContentContactFormLayoutFragment;
+        const formNode = cf.linkedForm?.node;
 
         if (!formNode || formNode.__typename !== 'CustomForm' || !formNode.id) {
-          return (
-            <div class="text-red-600 text-sm">
-              No Contact Form selected. Please select a valid form in ACF.
-            </div>
-          );
+          return <div class="text-red-600 text-sm">No Contact Form selected.</div>;
         }
-        const numericFormId = decodeGraphqlId(formNode.id);
+        const numId = decodeGraphqlId(formNode.id);
 
         return (
-  <FormBlock
-    form={{
-      id: String(numericFormId),
-      title: formNode.title ?? '',
-      fields: (formNode.formFields?.formFields ?? [])
-        .filter((field): field is NonNullable<typeof field> => Boolean(field))
-        .map(field => ({
-          formFieldName: field.formFieldName ?? '',
-          formFieldLabel: field.formFieldLabel ?? '',
-          formFieldType: Array.isArray(field.formFieldType) ? field.formFieldType[0] ?? 'text' : field.formFieldType ?? 'text',
-          formFieldsRequired: field.formFieldsRequired ?? false,
-          formFieldsPlaceholder: field.formFieldsPlaceholder ?? '',
-          formFieldsOptions: field.formFieldsOptions ?? '',
-          formFieldsDefault: field.formFieldsDefault ?? '',
-        }))
-    }}
-    intro={contactFormBlock.formIntro ?? undefined}
-    client:load
-  />
-);
+          <FormBlock
+            form={{
+              id: String(numId),
+              title: formNode.title ?? '',
+              fields: (formNode.formFields?.formFields ?? [])
+  .filter((f): f is NonNullable<typeof f> => 
+    Boolean(f?.formFieldName && f.formFieldLabel)
+  )
+  .map(f => ({
+    formFieldName: f.formFieldName!,
+    formFieldLabel: f.formFieldLabel!,
+    formFieldType: Array.isArray(f.formFieldType)
+      ? f.formFieldType[0] ?? 'text'
+      : f.formFieldType ?? 'text',
+    formFieldsRequired: f.formFieldsRequired ?? false,
+    formFieldsPlaceholder: f.formFieldsPlaceholder ?? '',
+    formFieldsOptions: Array.isArray(f.formFieldsOptions)
+      ? f.formFieldsOptions.filter((opt): opt is string => typeof opt === 'string')
+      : f.formFieldsOptions
+        ? [f.formFieldsOptions].filter((s): s is string => typeof s === 'string')
+        : [],
+    formFieldsDefault: f.formFieldsDefault ?? ''
+  }))
+            }}
+            intro={cf.formIntro ?? undefined}
+            client:load
+          />
+        );
       }
 
       default:
         return null;
     }
-  } catch (error) {
+  } catch {
     return null;
   }
 })}

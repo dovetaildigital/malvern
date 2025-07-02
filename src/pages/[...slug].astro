@@ -4,6 +4,9 @@ import PageBuilder from '@/components/PageBuilder.astro';
 import { fetchPageData } from '@/lib/fetchPageData';
 import { fetchAllPageSlugs } from '@/lib/fetchAllPageSlugs';
 import { PageIdType } from '@/types/graphql-types';
+import client from '@/lib/wp';
+import type { SeoSettings } from '@/types/graphql-types';
+import { fetchGlobalSeoSettings } from '@/utils/fetchGlobalSeoSettings';
 
 export async function getStaticPaths() {
   const slugs = await fetchAllPageSlugs();
@@ -19,7 +22,6 @@ interface SlugParams {
   slug?: string | string[];
 }
 const { slug } = Astro.params as SlugParams;
-// This is always a string or undefined
 const fullSlug = typeof slug === 'string' ? slug : '';
 
 const page = await fetchPageData(fullSlug, PageIdType.URI);
@@ -28,10 +30,20 @@ if (!page) {
   throw new Error(`Page not found for slug: ${fullSlug}`);
 }
 
-const { title, pageBuilder } = page;
+const { title, pageBuilder, seoSettings: rawSeoSettings } = page;
+const seoSettings = rawSeoSettings as SeoSettings | null;
 const rawBlocks = pageBuilder?.content ?? [];
+
+const globalSeo = await fetchGlobalSeoSettings();
+const globalSeoSettings = globalSeo.seoSettings;
 ---
 
-<BaseLayout title={title}>
+<BaseLayout
+  title={title ?? ''}
+  fallbackTitle={title ?? 'Untitled'}
+  seoSettings={seoSettings}
+  globalSeoSettings={globalSeoSettings}
+  titleSuffix=" | Dovetail Digital"
+>
   <PageBuilder contentBlocks={rawBlocks} /> 
 </BaseLayout>

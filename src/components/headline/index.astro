@@ -1,0 +1,35 @@
+---
+// src/components/headline/Headline.astro
+
+interface Props {
+  headlineText: string;
+  headlineSize: string | string[];
+  containerWidth?: string;
+}
+
+const { headlineText, headlineSize, containerWidth = "w-full" } = Astro.props;
+
+const validTags = ['1', '2', '3', '4', '5', 'p'] as const;
+type Tag = typeof validTags[number];
+
+const sizeValue = Array.isArray(headlineSize) ? headlineSize[0] : headlineSize;
+const normalizedSize = typeof sizeValue === 'string' ? sizeValue.toLowerCase().trim() : '';
+const tagSuffix = validTags.includes(normalizedSize as Tag) ? (normalizedSize as Tag) : 'p';
+const tagName = tagSuffix === 'p' ? 'p' : `h${tagSuffix}`;
+---
+
+<div class:list={[containerWidth, "text-center", "mt-24 mb-8"]} data-fade>
+  {tagName === 'p' ? (
+    <p class={`heading-${tagSuffix}`} set:html={headlineText} />
+  ) : tagName === 'h1' ? (
+    <h1 class={`heading-${tagSuffix}`} set:html={headlineText} />
+  ) : tagName === 'h2' ? (
+    <h2 class={`heading-${tagSuffix} text-center`} set:html={headlineText} />
+  ) : tagName === 'h3' ? (
+    <h3 class={`heading-${tagSuffix} text-center`} set:html={headlineText} />
+  ) : tagName === 'h4' ? (
+    <h4 class={`heading-${tagSuffix}`} set:html={headlineText} />
+  ) : tagName === 'h5' ? (
+    <h5 class={`heading-${tagSuffix}`} set:html={headlineText} />
+  ) : null}
+</div>

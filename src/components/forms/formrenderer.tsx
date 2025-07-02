@@ -11,7 +11,7 @@ interface Field {
   formFieldType: string;
   formFieldsRequired: boolean;
   formFieldsPlaceholder?: string;
-  formFieldsOptions?: string;
+  formFieldsOptions?: string[];
   formFieldsDefault?: string;
 }
 

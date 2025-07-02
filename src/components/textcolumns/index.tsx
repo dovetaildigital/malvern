@@ -1,8 +1,10 @@
 import React from 'react';
 import Button from '@/components/ui/button';
+import FormRenderer from '@/components/forms/formrenderer';
 
-interface TextColumn {
-  columnWidth: string; // e.g. 'col-span-6', 'col-span-8'
+// In textcolumns/index.tsx
+export interface TextColumn {
+  columnWidth: string[]; // This should be string[] only
   columnContent: string;
   columnButton?: {
     buttonLink: {
@@ -12,6 +14,24 @@ interface TextColumn {
     };
     buttonIcon: string;
     buttonStyle: 'primary' | 'secondary' | 'default';
+  };
+  columnLinkedForm?: {
+    nodes: Array<{
+      __typename: string;
+      id: string;
+      title: string;
+      formFields: {
+        formFields: Array<{
+          formFieldName: string;
+          formFieldLabel: string;
+          formFieldType: string;
+          formFieldsRequired: boolean;
+          formFieldsPlaceholder?: string;
+          formFieldsOptions?: string[];
+          formFieldsDefault?: string;
+        }>;
+      };
+    }>;
   };
 }
 
@@ -24,14 +44,20 @@ export const TextColumns: React.FC<TextColumnsProps> = ({
   columnContent,
   containerWidth = 'container-lg',
 }) => {
+  console.log('Column data:', JSON.stringify(columnContent, null, 2));
   return (
     <section className="w-full px-4 py-18 lg:py-24">
       <div className={containerWidth}>
         <div className="grid grid-cols-12 gap-6 gap-y-36 md:gap-y-6">
           {columnContent.map((column, index) => {
+            console.log('Form raw:', column.columnLinkedForm);
             const spanClass = column.columnWidth
               ? `col-span-12 md:${column.columnWidth}`
               : `col-span-12 md:col-span-6`;
+
+            const form = column.columnLinkedForm?.nodes?.[0];
+            console.log('Resolved form:', form);
+            console.log('Form fields:', form?.formFields?.formFields);
 
             return (
               <div key={index} className={spanClass} data-fade>
@@ -46,6 +72,18 @@ export const TextColumns: React.FC<TextColumnsProps> = ({
                     style={column.columnButton.buttonStyle}
                     className="mt-4"
                   />
+                )}
+
+                {form?.__typename === 'CustomForm' && (
+                  <div className="mt-8">
+                    <FormRenderer
+                      form={{
+                        id: form.id,
+                        title: form.title,
+                        fields: form.formFields?.formFields || [],
+                      }}
+                    />
+                  </div>
                 )}
               </div>
             );
