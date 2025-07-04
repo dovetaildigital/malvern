@@ -53,15 +53,12 @@ const emblaOptions: EmblaOptionsType = {
   // Debug when Embla instance becomes available
   useEffect(() => {
     if (autoplayMode !== 'always') {
-      console.log('Autoplay not enabled, mode:', autoplayMode);
       return;
     }
     if (!embla) {
-      console.log('Embla not initialized');
       return;
     }
   
-    console.log('Setting up autoplay with interval:', intervalMs);
   
 
     const play = () => {
@@ -83,12 +80,10 @@ const emblaOptions: EmblaOptionsType = {
       
       let timer: NodeJS.Timeout;
       const startAutoplay = () => {
-        console.log('Starting autoplay with interval:', intervalMs);
         timer = setInterval(play, intervalMs);
       };
     
       const stopAutoplay = () => {
-        console.log('Stopping autoplay');
         clearInterval(timer);
       };
     
@@ -97,13 +92,11 @@ const emblaOptions: EmblaOptionsType = {
 // Handle hover events
 const container = embla.containerNode();
 if (container && pauseOnHover) {
-  console.log('Setting up hover events');
   container.addEventListener('mouseenter', stopAutoplay);
   container.addEventListener('mouseleave', startAutoplay);
 }
 
 return () => {
-  console.log('Cleaning up autoplay');
   stopAutoplay();
   if (container) {
     container.removeEventListener('mouseenter', stopAutoplay);

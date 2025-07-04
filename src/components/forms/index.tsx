@@ -47,7 +47,7 @@ export default function FormBlock({
         isVisible ? 'opacity-100' : 'opacity-0 translate-y-8'
       }`}
     >
-      <div className="container mx-auto p-8 space-y-8 bg-white">
+      <div className="container mx-auto p-8 space-y-8 bg-white rounded-lg shadow">
         {intro && (
           <div
             className="body"

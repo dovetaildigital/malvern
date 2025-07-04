@@ -47,7 +47,9 @@ fragment ImageStackFields on PageBuilderContentImageStackLayout {
       }
     }
     stackLabel
+
   }
+  imageStackHideOn
 }
 
 fragment HeadlineFields on PageBuilderContentHeadlineLayout {
@@ -69,26 +71,6 @@ fragment TextFields on PageBuilderContentTextLayout {
       }
       buttonIcon
       buttonStyle
-    }
-    columnLinkedForm {
-      nodes {
-        __typename
-        ... on CustomForm {
-          id
-          title
-          formFields {
-            formFields {
-              formFieldName
-              formFieldLabel
-              formFieldType
-              formFieldsRequired
-              formFieldsPlaceholder
-              formFieldsOptions
-              formFieldsDefault
-            }
-          }
-        }
-      }
     }
   }
 }
@@ -166,6 +148,7 @@ fragment CarouselFields on PageBuilderContentCarouselLayout {
       target
     }
   }
+  carouselHideOn
 }
 
 

@@ -6,6 +6,7 @@ export interface StackItem {
     };
   };
   stackLabel?: string;
+  hideOn?: 'all' | 'mobile' | 'desktop';
 }
 
 export interface ParsedStackItem {
@@ -13,4 +14,6 @@ export interface ParsedStackItem {
   src: string;
   alt: string;
   label: string;
+  hideOn?: 'all' | 'mobile' | 'desktop';
 }
+  

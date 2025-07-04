@@ -6,11 +6,20 @@ import {
   useAnimation,
 } from 'framer-motion'
 
+type HideOn = 'all' | 'mobile' | 'desktop'
+
 interface Item {
   id: string
   src: string
   alt?: string
   label?: string
+}
+
+interface DragReorderWrapperProps {
+  items: Item[]
+  paddingTop?: 'normal' | 'more' | 'less'
+  paddingBottom?: 'normal' | 'more' | 'less'
+  hideOn?: HideOn
 }
 
 const ITEM_WIDTH = 300
@@ -27,22 +36,6 @@ function hashStringToInt(str: string): number {
 function seededRandom(seed: number): number {
   const x = Math.sin(seed) * 10000
   return x - Math.floor(x)
-}
-
-function useIsDesktop() {
-  const [isDesktop, setIsDesktop] = useState(false)
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    
-    const update = () => setIsDesktop(window.innerWidth >= 768)
-    update()
-    
-    window.addEventListener('resize', update)
-    return () => window.removeEventListener('resize', update)
-  }, [])
-
-  return isDesktop
 }
 
 function DraggableCard({
@@ -70,7 +63,15 @@ function DraggableCard({
   const randomX = useMemo(() => seededRandom(seed) * 200 - 100, [seed])
   const randomY = useMemo(() => seededRandom(seed + 1) * -200 - 50, [seed])
 
-  const isDesktop = useIsDesktop()
+  // Use isDesktop for rotation difference, but not for stack logic here
+  const [isDesktop, setIsDesktop] = useState(false)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const update = () => setIsDesktop(window.innerWidth >= 768)
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [])
   const randomRotate = useMemo(
     () => (isDesktop ? seededRandom(seed + 2) * 10 - 5 : 0),
     [seed, isDesktop]
@@ -79,41 +80,30 @@ function DraggableCard({
   const cardStyle = useMemo(() => {
     const isDragging = draggingId.current === item.id
     return {
-      // Layout properties
       width: ITEM_WIDTH,
       height: ITEM_HEIGHT,
       top: 0,
       left: `${index * MOBILE_SPREAD}px`,
       marginLeft: index === 0 ? 0 : -DESKTOP_OVERLAP,
       zIndex: zOrder.indexOf(item.id) + 1,
-      
-      // Visual styling
       borderRadius: 16,
       backgroundColor: 'white',
-      boxShadow: isDragging 
+      boxShadow: isDragging
         ? '0 25px 50px rgba(0,0,0,0.35)'
         : '0 10px 20px rgba(0,0,0,0.15)',
       overflow: 'hidden',
-      
-      // Interaction
       touchAction: 'none' as const,
       userSelect: 'none' as const,
-      
-      // Flex
       display: 'flex' as const,
       flexDirection: 'column' as const,
-      
-      // Animation
       transition: 'box-shadow 0.2s ease',
-      
-      // Framer Motion specific
       position: 'relative' as const,
       x: 0,
       y: 0,
       rotate: 0,
-    } as const // Add this to make the entire object readonly
+    } as const
   }, [draggingId.current, index, item.id, zOrder])
-  
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       controls.start({
@@ -128,7 +118,6 @@ function DraggableCard({
         },
       })
     }, START_DELAY_MS)
-
     return () => clearTimeout(timeout)
   }, [controls, index])
 
@@ -182,7 +171,7 @@ function DraggableCard({
         alt={item.alt || ''}
         draggable={false}
         className="w-full h-full object-cover"
-        onError={(e) => {
+        onError={e => {
           const tgt = e.target as HTMLImageElement
           tgt.onerror = null
           tgt.src = 'data:image/svg+xml;base64,...'
@@ -201,80 +190,105 @@ export default function DragReorderWrapper({
   items,
   paddingTop = 'normal',
   paddingBottom = 'normal',
-}: {
-  items: Item[]
-  paddingTop?: 'normal' | 'more' | 'less'
-  paddingBottom?: 'normal' | 'more' | 'less'
-}) {
+  hideOn,
+}: DragReorderWrapperProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const draggingId = useRef<string | null>(null)
   const [zOrder, setZOrder] = useState<string[]>(items.map(i => i.id))
 
+  // Section-level visibility logic
+  const showMobile = !hideOn || (hideOn !== 'all' && hideOn !== 'mobile')
+  const showDesktop = !hideOn || (hideOn !== 'all' && hideOn !== 'desktop')
+
+  // Padding logic
+  const pad = (val?: 'normal' | 'more' | 'less') =>
+    val === 'more' ? 48 : val === 'less' ? 8 : 24
+
+  // Render separate sections with proper Tailwind breakpoint classes
   return (
-    <div
-      ref={containerRef}
-      className="relative w-full overflow-x-clip touch-none h-[400px] md:h-[300px]"
-      style={{
-        height: ITEM_HEIGHT,
-        userSelect: 'none',
-      }}
-    >
-      <div className="relative md:hidden h-full">
-        {items.map((item, i) => {
-          const style = {
-            position: 'absolute' as const,
-            width: ITEM_WIDTH,
-            height: ITEM_HEIGHT,
-            top: 0,
-            left: '50%',
-            transform: `translateX(-50%) translateX(${i * MOBILE_SPREAD}px)`,
-            zIndex: i,
-            borderRadius: 16,
-            backgroundColor: 'white',
-            boxShadow: '0 10px 20px rgba(0,0,0,0.15)',
-            overflow: 'hidden',
-            userSelect: 'none' as const,
-          }
+    <>
+      {/* Mobile Section */}
+      {showMobile && (
+        <section className="py-24 md:hidden" style={{ paddingTop: pad(paddingTop), paddingBottom: pad(paddingBottom) }}>
+          <div
+            ref={containerRef}
+            className="relative w-full overflow-x-clip touch-none h-[400px]"
+            style={{
+              height: ITEM_HEIGHT,
+              userSelect: 'none',
+            }}
+          >
+            {items.map((item, i) => {
+              const style = {
+                position: 'absolute' as const,
+                width: ITEM_WIDTH,
+                height: ITEM_HEIGHT,
+                top: 0,
+                left: '50%',
+                transform: `translateX(-50%) translateX(${i * MOBILE_SPREAD}px)`,
+                zIndex: i,
+                borderRadius: 16,
+                backgroundColor: 'white',
+                boxShadow: '0 10px 20px rgba(0,0,0,0.15)',
+                overflow: 'hidden',
+                userSelect: 'none' as const,
+              }
 
-          return (
-            <motion.div
-              key={item.id}
-              style={style}
-            >
-              <img
-                src={item.src}
-                alt={item.alt || ''}
-                draggable={false}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  const tgt = e.target as HTMLImageElement
-                  tgt.onerror = null
-                  tgt.src = 'data:image/svg+xml;base64,...'
-                }}
-              />
-              {(item.label || item.alt) && (
-                <div className="absolute bottom-2 left-2 px-2 py-1 text-background bg-foreground/50 rounded">
-                  {item.label || item.alt}
-                </div>
-              )}
-            </motion.div>
-          )
-        })}
-      </div>
+              return (
+                <motion.div
+                  key={item.id}
+                  style={style}
+                >
+                  <img
+                    src={item.src}
+                    alt={item.alt || ''}
+                    draggable={false}
+                    className="w-full h-full object-cover"
+                    onError={e => {
+                      const tgt = e.target as HTMLImageElement
+                      tgt.onerror = null
+                      tgt.src = 'data:image/svg+xml;base64,...'
+                    }}
+                  />
+                  {(item.label || item.alt) && (
+                    <div className="absolute bottom-2 left-2 px-2 py-1 text-background bg-foreground/50 rounded">
+                      {item.label || item.alt}
+                    </div>
+                  )}
+                </motion.div>
+              )
+            })}
+          </div>
+        </section>
+      )}
 
-      <div className="hidden md:flex justify-center items-center h-full relative">
-        {items.map((item, i) => (
-          <DraggableCard
-            key={item.id}
-            item={item}
-            index={i}
-            draggingId={draggingId}
-            containerRef={containerRef}
-            zOrder={zOrder}
-            setZOrder={setZOrder}
-          />
-        ))}
-      </div>
-    </div>
+      {/* Desktop Section */}
+      {showDesktop && (
+        <section className="py-24 hidden md:block" style={{ paddingTop: pad(paddingTop), paddingBottom: pad(paddingBottom) }}>
+          <div
+            ref={containerRef}
+            className="relative w-full overflow-x-clip touch-none h-[300px]"
+            style={{
+              height: ITEM_HEIGHT,
+              userSelect: 'none',
+            }}
+          >
+            <div className="relative flex justify-center items-center h-full">
+              {items.map((item, i) => (
+                <DraggableCard
+                  key={item.id}
+                  item={item}
+                  index={i}
+                  draggingId={draggingId}
+                  containerRef={containerRef}
+                  zOrder={zOrder}
+                  setZOrder={setZOrder}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+    </>
   )
 }

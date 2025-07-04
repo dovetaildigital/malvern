@@ -4752,6 +4752,8 @@ export type PageBuilderContentCarouselLayout = AcfFieldGroup & AcfFieldGroupFiel
   carouselContents: Maybe<Array<Maybe<PageBuilderContentCarouselContents>>>;
   /** Field of the &quot;select&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
   carouselEffect: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  /** Field of the &quot;select&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselHideOn: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** The length of time it pauses between slides. Select 0 for non-stop. */
   carouselInterval: Maybe<Scalars['Float']['output']>;
   /** Field of the &quot;true_false&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
@@ -4787,6 +4789,8 @@ export type PageBuilderContentCarouselLayoutFields = {
   carouselContents: Maybe<Array<Maybe<PageBuilderContentCarouselContents>>>;
   /** Field of the &quot;select&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
   carouselEffect: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  /** Field of the &quot;select&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
+  carouselHideOn: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** The length of time it pauses between slides. Select 0 for non-stop. */
   carouselInterval: Maybe<Scalars['Float']['output']>;
   /** Field of the &quot;true_false&quot; Field Type added to the schema as part of the &quot;PageBuilderContentCarouselLayout&quot; Field Group */
@@ -5118,6 +5122,8 @@ export type PageBuilderContentImageStackLayout = AcfFieldGroup & AcfFieldGroupFi
   fieldGroupName: Maybe<Scalars['String']['output']>;
   /** Field of the &quot;repeater&quot; Field Type added to the schema as part of the &quot;PageBuilderContentImageStackLayout&quot; Field Group */
   imageStack: Maybe<Array<Maybe<PageBuilderContentImageStack>>>;
+  /** Field of the &quot;select&quot; Field Type added to the schema as part of the &quot;PageBuilderContentImageStackLayout&quot; Field Group */
+  imageStackHideOn: Maybe<Array<Maybe<Scalars['String']['output']>>>;
 };
 
 /** Interface representing fields of the ACF &quot;PageBuilderContentImageStackLayout&quot; Field Group */
@@ -5129,6 +5135,8 @@ export type PageBuilderContentImageStackLayoutFields = {
   fieldGroupName: Maybe<Scalars['String']['output']>;
   /** Field of the &quot;repeater&quot; Field Type added to the schema as part of the &quot;PageBuilderContentImageStackLayout&quot; Field Group */
   imageStack: Maybe<Array<Maybe<PageBuilderContentImageStack>>>;
+  /** Field of the &quot;select&quot; Field Type added to the schema as part of the &quot;PageBuilderContentImageStackLayout&quot; Field Group */
+  imageStackHideOn: Maybe<Array<Maybe<Scalars['String']['output']>>>;
 };
 
 /** Interface representing fields of the ACF &quot;PageBuilderContentImageStack&quot; Field Group */
