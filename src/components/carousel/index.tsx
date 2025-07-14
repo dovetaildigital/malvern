@@ -129,14 +129,15 @@ return () => {
                 className="flex-shrink-0"
                 style={{ 
                   width: `${slidePct}%`, 
-                  padding: '0 0.5rem', 
+                  padding: '0 0.5rem',
+                  margin: '0 0.5rem', 
                   boxSizing: 'border-box' 
                 }}
               >
                 <img
                   src={img.sourceUrl}
                   alt={img.altText || ''}
-                  className="w-2/4 mx-auto h-auto object-contain aspect-square"
+                  className="w-full md:w-2/4 md:mx-auto h-auto object-contain aspect-square"
                   loading={carouselLazyLoad ? 'lazy' : 'eager'}
                 />
               </div>

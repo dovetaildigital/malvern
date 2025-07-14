@@ -40,7 +40,7 @@ const data = await client.request<{ siteOptions: { headerMenu: { mainMenu: MenuI
 const menu = data.siteOptions.headerMenu.mainMenu;
 ---
 
-<ul id="main-menu" class="flex gap-12 py-8 relative z-50">
+<ul id="main-menu" class="flex gap-12 py-2 relative z-50">
   {menu.map(({ menuItem, submenu }) => (
     <li class="relative group">
       <a
