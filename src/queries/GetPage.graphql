@@ -47,7 +47,6 @@ fragment ImageStackFields on PageBuilderContentImageStackLayout {
       }
     }
     stackLabel
-
   }
   imageStackHideOn
 }
@@ -60,6 +59,7 @@ fragment HeadlineFields on PageBuilderContentHeadlineLayout {
 
 fragment TextFields on PageBuilderContentTextLayout {
   containerWidth
+  containerStyle
   columnContent {
     columnWidth
     columnContent

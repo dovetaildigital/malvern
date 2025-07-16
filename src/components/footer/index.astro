@@ -24,7 +24,7 @@ const {
 ---
 
 <footer class="my-12 p-4">
-  <div class="container bg-foreground text-background text-sm rounded-xl mx-auto p-10 grid grid-cols-1 md:grid-cols-4 gap-10 text-left">
+  <div class="container max-w-screen-xl bg-foreground text-background text-sm rounded-xl mx-auto p-10 grid grid-cols-1 md:grid-cols-4 gap-10 text-left">
 
     <!-- Logo & contact -->
     <div class="space-y-4 col-span-1 md:col-span-1">
@@ -32,7 +32,7 @@ const {
 
     </div>
     <div>
-      <ul class="space-y-1">
+      <ul class="space-y-1 text-left md:text-left">
         {footerPages?.map(({ menuItem }) => (
           <li>
             <a href={menuItem.url} target={menuItem.target} class="hover:underline">
@@ -43,7 +43,7 @@ const {
       </ul>
     </div>
     <div>
-      <ul class="space-y-1">
+      <ul class="space-y-1 text-left md:text-left">
         {footerServices?.map(({ menuItem }) => (
           <li>
             <a href={menuItem.url} target={menuItem.target} class="hover:underline">
@@ -54,7 +54,7 @@ const {
       </ul>
     </div>
     <div class="">
-      <ul class="space-y-1 text-right">
+      <ul class="space-y-1 text-left md:text-right">
         <li>{telephone}</li>
         <li>studio@dovetaildigital.co.uk</li>
       
@@ -66,8 +66,8 @@ const {
 
     <!-- Copyright -->
     <div class="md:col-span-4 text-white">
-      <p class="text-center">{footerCopyright || `© ${new Date().getFullYear()} Dovetail Digital. All rights reserved.`}</p>
-      <p class="text-center"><a href="">Privacy policy</a> | <a href="">Cookie policy</a></p>
+      <p class="text-left md:text-center">{footerCopyright || `© ${new Date().getFullYear()} Dovetail Digital. All rights reserved.`}</p>
+      <p class="text-left md:text-center"><a href="">Privacy policy</a> | <a href="">Cookie policy</a></p>
     </div>
   </div>
 </footer>

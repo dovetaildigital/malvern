@@ -162,7 +162,7 @@ const blocks: PageBuilderBlock[] = contentBlocks.filter(isPageBuilderBlock);
               };
             })}
             containerWidth={first(textBlock.containerWidth, 'container-lg')}
-          />
+            containerStyle={first(textBlock.containerStyle, 'plain') as 'plain' | 'blurb'}          />
         );
       }
 
@@ -191,7 +191,7 @@ const blocks: PageBuilderBlock[] = contentBlocks.filter(isPageBuilderBlock);
               };
             })}
             containerWidth="container-lg"
-          />
+                />
         );
       }
 

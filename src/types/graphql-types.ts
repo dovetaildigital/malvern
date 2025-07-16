@@ -5158,6 +5158,8 @@ export type PageBuilderContentTextLayout = AcfFieldGroup & AcfFieldGroupFields &
   /** Field of the &quot;repeater&quot; Field Type added to the schema as part of the &quot;PageBuilderContentTextLayout&quot; Field Group */
   columnContent: Maybe<Array<Maybe<PageBuilderContentColumnContent>>>;
   /** Field of the &quot;select&quot; Field Type added to the schema as part of the &quot;PageBuilderContentTextLayout&quot; Field Group */
+  containerStyle: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  /** Field of the &quot;select&quot; Field Type added to the schema as part of the &quot;PageBuilderContentTextLayout&quot; Field Group */
   containerWidth: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /**
    * The name of the field group
@@ -5170,6 +5172,8 @@ export type PageBuilderContentTextLayout = AcfFieldGroup & AcfFieldGroupFields &
 export type PageBuilderContentTextLayoutFields = {
   /** Field of the &quot;repeater&quot; Field Type added to the schema as part of the &quot;PageBuilderContentTextLayout&quot; Field Group */
   columnContent: Maybe<Array<Maybe<PageBuilderContentColumnContent>>>;
+  /** Field of the &quot;select&quot; Field Type added to the schema as part of the &quot;PageBuilderContentTextLayout&quot; Field Group */
+  containerStyle: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /** Field of the &quot;select&quot; Field Type added to the schema as part of the &quot;PageBuilderContentTextLayout&quot; Field Group */
   containerWidth: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   /**

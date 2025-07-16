@@ -44,6 +44,12 @@ export default {
     'md:w-3/4',
     'blurb-title',
     'blurb-body',
+    'scale-105',
+    'scale-100',
+    'opacity-70',
+    'opacity-100',
+    'transition-transform',
+    'transition-opacity',
     {
       pattern: /::view-transition-.+/,
       variants: ['root']
