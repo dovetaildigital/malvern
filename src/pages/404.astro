@@ -12,22 +12,47 @@ const defaultSeoSettings: SeoSettings = {
   seoImage: null
 };
 
+// Default footer data
+const defaultFooterData = {
+  footerAddress: null,
+  footerCopyright: `© ${new Date().getFullYear()} Dovetail Digital. All rights reserved.`,
+  telephone: null,
+  footerPages: [],
+  footerServices: [],
+  footerLogo: null
+};
+
 interface GlobalSettings {
   seoSettings: SeoSettings | null;
+  footerData?: typeof defaultFooterData;
 }
 
-let global: GlobalSettings = { seoSettings: null };
+let global: GlobalSettings = { 
+  seoSettings: null,
+  footerData: defaultFooterData
+};
 
 try {
   if (import.meta.env.PROD && import.meta.env.PUBLIC_WORDPRESS_API_URL) {
     const { fetchGlobalSeoSettings } = await import('@/utils/fetchGlobalSeoSettings');
-    const result = await fetchGlobalSeoSettings().catch(() => null);
-    if (result?.seoSettings) {
-      global.seoSettings = result.seoSettings;
+    const seoResult = await fetchGlobalSeoSettings().catch(() => null);
+    if (seoResult?.seoSettings) {
+      global.seoSettings = seoResult.seoSettings;
+    }
+
+    // Try to fetch footer data, but don't fail if it doesn't work
+    try {
+      const { fetchFooterData } = await import('@/utils/fetchFooterData');
+      const footerResult = await fetchFooterData().catch(() => null);
+      if (footerResult?.footer) {
+        global.footerData = { ...defaultFooterData, ...footerResult.footer };
+      }
+    } catch (footerError) {
+      console.error('Error fetching footer data:', footerError);
     }
   }
 } catch (error) {
-  console.error('Error fetching SEO settings:', error);
+  console.error('Error in 404 page:', error);
 }
 ---
 
@@ -36,6 +61,7 @@ try {
   fallbackTitle="Page not found"
   globalSeoSettings={global.seoSettings || defaultSeoSettings}
   seoSettings={null}
+  footerData={global.footerData}
 >
   <section class="flex flex-col items-center text-center">
     <h1 class="heading-1 my-12">404 - Page not found</h1>
