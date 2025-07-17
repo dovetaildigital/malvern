@@ -1,20 +1,45 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { fetchGlobalSeoSettings } from '@/utils/fetchGlobalSeoSettings';
+import type { SeoSettings } from '@/types/graphql-types';
 
-const global = await fetchGlobalSeoSettings();
+// Define default SEO settings
+const defaultSeoSettings: SeoSettings = {
+  fieldGroupName: 'seo',
+  seoTitle: 'Page not found | Dovetail Digital',
+  seoDescription: 'The page you are looking for could not be found.',
+  seoIndex: false,
+  seoCanonical: null,
+  seoImage: null
+};
+
+interface GlobalSettings {
+  seoSettings: SeoSettings | null;
+}
+
+let global: GlobalSettings = { seoSettings: null };
+
+try {
+  if (import.meta.env.PROD && import.meta.env.PUBLIC_WORDPRESS_API_URL) {
+    const { fetchGlobalSeoSettings } = await import('@/utils/fetchGlobalSeoSettings');
+    const result = await fetchGlobalSeoSettings().catch(() => null);
+    if (result?.seoSettings) {
+      global.seoSettings = result.seoSettings;
+    }
+  }
+} catch (error) {
+  console.error('Error fetching SEO settings:', error);
+}
 ---
 
 <BaseLayout
   title="Page not found"
   fallbackTitle="Page not found"
-  globalSeoSettings={global.seoSettings}
+  globalSeoSettings={global.seoSettings || defaultSeoSettings}
   seoSettings={null}
 >
   <section class="flex flex-col items-center text-center">
     <h1 class="heading-1 my-12">404 - Page not found</h1>
-    <p class="body mb-4">Not all who wander are lost. But you are.
-    </p>
+    <p class="body mb-4">Not all who wander are lost. But you are.</p>
     <p class="body mb-4">You either mistyped the URL or used a link that no longer works.</p>
     <a href="/" class="btn">Go home</a>
   </section>
