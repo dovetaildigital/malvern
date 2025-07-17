@@ -66,7 +66,37 @@ const footerQuery = `
   }
 `;
 
-const { siteOptions } = await client.request<{ siteOptions: { footer: FooterData } }>(footerQuery);
+const defaultFooter: FooterData = {
+  footerEmail: '',
+  telephone: '',
+  footerAddress: '',
+  footerCopyright: `© ${new Date().getFullYear()} Dovetail Digital. All rights reserved.`,
+  footerPages: [],
+  footerServices: [],
+  footerLogo: {
+    node: {
+      altText: '',
+      title: '',
+      uri: '',
+      mediaDetails: {
+        width: 0,
+        height: 0,
+        sizes: []
+      }
+    }
+  }
+};
+
+let footer = defaultFooter;
+try {
+  const { siteOptions } = await client.request<{ siteOptions: { footer: FooterData } }>(footerQuery);
+  if (siteOptions?.footer) {
+    footer = { ...defaultFooter, ...siteOptions.footer };
+  }
+} catch (e) {
+  // Optionally log error
+}
+
 const { seoSettings, globalSeoSettings, fallbackTitle, titleSuffix } = Astro.props as Props;
 
 const resolved = resolveSeo({
@@ -107,7 +137,7 @@ const resolved = resolveSeo({
       <main class="flex-1 pt-12 md:pt-24">
         <slot />
       </main>
-      <Footer footer={siteOptions.footer} />
+      <Footer footer={footer} />
     </div>
   </body>
 </html>
