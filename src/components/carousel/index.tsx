@@ -51,6 +51,10 @@ const Carousel: React.FC<{ data: CarouselFields }> = ({ data }) => {
     slidesToScroll: 1,
     align: 'start',
     duration: Math.min(Math.max(Number(carouselSpeed) || 500, 100), 20000),
+    dragFree: false,
+    containScroll: 'trimSnaps',
+    dragThreshold: 10,
+    watchDrag: true,
   };
 
   const [emblaRef, embla] = useEmblaCarousel(emblaOptions);
