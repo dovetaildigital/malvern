@@ -37,7 +37,7 @@ const ProcessTabs: React.FC<CardDeckProps> = ({ cardDeckItem }) => {
                     {item.cardDeckIcon && (
                       <Icon 
                         icon={item.cardDeckIcon} 
-                        className={`w-4 h-4 ${isActive 
+                        className={`w-6 h-6 md:w-4 md:h-4 ${isActive 
                           ? '!text-white' 
                           : 'text-black group-hover:text-white'}`} 
                         weight={isActive ? 'bold' : 'regular'}
