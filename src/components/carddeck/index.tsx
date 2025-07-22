@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import type { CardDeckProps } from '@/types/carddeck';
 import Icon from '@/components/ui/icon';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const ProcessTabs: React.FC<CardDeckProps> = ({ cardDeckItem }) => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -10,9 +11,9 @@ const ProcessTabs: React.FC<CardDeckProps> = ({ cardDeckItem }) => {
 
   return (
     <section className="bg-base-100 px-4 py-16">
-      <div className="container mx-auto max-w-sm md:max-w-2xl">
+      <div className="container mx-auto max-w-sm md:max-w-2xl grid grid-cols-5 md:grid-cols-1 gap-4">
         {/* Tab Titles */}
-        <ul className="flex overflow-x-auto mb-8 justify-between">
+        <ul className="flex flex-col col-span-1 md:flex-row md:overflow-x-auto md:mb-8 md:justify-between mx-auto gap-2">
           {cardDeckItem.map((item, index) => {
             const isActive = index === activeIndex;
             return (
@@ -37,13 +38,15 @@ const ProcessTabs: React.FC<CardDeckProps> = ({ cardDeckItem }) => {
                     {item.cardDeckIcon && (
                       <Icon 
                         icon={item.cardDeckIcon} 
-                        className={`w-6 h-6 md:w-4 md:h-4 ${isActive 
-                          ? '!text-white' 
-                          : 'text-black group-hover:text-white'}`} 
+                        className={`w-6 h-6 md:w-4 md:h-4 transition-colors duration-300 ${
+                          isActive ? '!text-white' : 'text-black group-hover:text-white'
+                        }`} 
                         weight={isActive ? 'bold' : 'regular'}
                       />
                     )}
-                    <span className={`hidden md:inline ${isActive ? 'text-background' : 'text-base-content'}`}>
+                    <span className={`hidden md:inline transition-colors duration-300 ${
+                      isActive ? 'text-background' : 'text-base-content'
+                    }`}>
                       {item.cardDeckHeadline}
                     </span>
                   </span>
@@ -53,30 +56,27 @@ const ProcessTabs: React.FC<CardDeckProps> = ({ cardDeckItem }) => {
           })}
         </ul>
 
-        {/* Mobile Swipeable Content Area */}
-        <div
-          ref={containerRef}
-          className="flex overflow-x-auto snap-x snap-mandatory -mx-4 px-4 md:block md:overflow-visible"
-        >
-          {cardDeckItem.map((item, index) => (
-            <div
-              key={index}
-              className="snap-start"
+        {/* Content Area with Framer Motion Animation */}
+        <div className="relative col-span-4 min-h-[200px] md:min-h-[150px]">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeIndex}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="absolute inset-0"
             >
-              
-              {index === activeIndex && (
-                <div className="space-y-4">
-                  
-                  <h3 className="text-xl font-semibold text-foreground">
-                    {item.cardDeckHeadline}
-                  </h3>
-                  <p className="text-base text-base-content/80 text-left">
-                    {item.cardDeckDescription}
-                  </p>
-                </div>
-              )}
-            </div>
-          ))}
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold text-foreground">
+                  {cardDeckItem[activeIndex].cardDeckHeadline}
+                </h3>
+                <p className="text-base text-base-content/80 text-left">
+                  {cardDeckItem[activeIndex].cardDeckDescription}
+                </p>
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     </section>
